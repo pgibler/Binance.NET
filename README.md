@@ -29,8 +29,8 @@ To run Binance.NET in your C# application, you need your API key & secret handy.
 
 - `DepthCache(string symbol)`
 - `DepthVolume(string symbol)`
-- `SortBids(string symbol, double max = Double.PositiveInfinity, bool baseValue = false)`
-- `SortAsks(string symbol, double max = Double.PositiveInfinity, bool baseValue = false)`
+- `SortBids(string symbol, double max, bool baseValue)`
+- `SortAsks(string symbol, double max, bool baseValue)`
 - `Buy(string symbol, double quantity, double price, Dictionary<string, string> flags)`
 - `Sell(string symbol, double quantity, double price, Dictionary<string, string> flags)`
 - `Cancel(string symbol, string orderId, Action<JToken> callback)`
