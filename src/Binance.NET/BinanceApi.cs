@@ -217,6 +217,8 @@ namespace Binance.NET
 
         private void Request(string url, Dictionary<string, string> query, Action<JObject> callback, HttpMethod method, Action<HttpClient> clientHandler)
         {
+            query["symbol"] = !string.IsNullOrEmpty(query["symbol"]) ? query["symbol"].Replace("-", "") : "";
+
             Request(url, QueryString(query), callback, method, clientHandler);
         }
 
@@ -244,11 +246,6 @@ namespace Binance.NET
             Request(url, query, callback, method, client => {});
         }
 
-        private void ApiRequest(string url, string query, Action<JObject> callback, HttpMethod method)
-        {
-            Request(url, query, callback, method, client => { client.DefaultRequestHeaders.Add("X-MBX-APIKEY", _apiKey); });
-        }
-
         private void SignedRequest(string url, Dictionary<string, string> query, Action<JObject> callback, HttpMethod method)
         {
             query["timestamp"] = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
@@ -261,8 +258,8 @@ namespace Binance.NET
             var hash = sha256.ComputeHash(Encoding.ASCII.GetBytes(queryString));
             var signature = BitConverter.ToString(hash).Replace("-", "").ToLower();
 
-            var fullQueryString = $"{queryString}&signature={signature}";
-            ApiRequest(url, fullQueryString, callback, method);
+            query["signature"] = signature;
+            Request(url, query, callback, method, client => { client.DefaultRequestHeaders.Add("X-MBX-APIKEY", _apiKey); });
         }
         
         private void Order(string side, string symbol, double quantity=1, double price=0.00000001, Dictionary<string, string> flags=null)

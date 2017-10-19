@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 
@@ -16,7 +17,9 @@ namespace Binance.NET.Demo
 
             binance.Buy("ETH-BTC", 1.0, 0.001);
             
-            binance.Sell("LTC-BTC", 0.99000000, 0.010746);
+            binance.Sell("BTC-USDT", 0.001, 10000);
+
+            binance.Depth("ETH-BTC", Console.WriteLine);
         }
     }
 }
