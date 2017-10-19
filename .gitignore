@@ -1,0 +1,9 @@
+# Build files
+bin/
+obj/
+
+packages/
+
+.vs/
+
+settings.txt
