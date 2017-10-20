@@ -44,6 +44,7 @@ Console.WriteLine($"Asks: {depthCache.Asks.Keys.Count}, Bids: {depthCache.Bids.K
 ```
 </details>
 
+
 ```cs
 DepthVolume(string symbol)
 ```
@@ -62,6 +63,7 @@ Console.WriteLine($"Bids: {volume.Bids}, Asks: {volume.Asks}, BidQuantity: {volu
 ```
 </details>
 
+
 ```cs
 SortBids(string symbol, double max, bool baseValue)
 ```
@@ -78,6 +80,7 @@ Console.WriteLine($"Bids: {string.Join(",", sortedBids.Keys)}");
 // Outputs - "Bids: [50.234,50.235,50.23453,50.23454]"
 ```
 </details>
+
 
 ```cs
 SortAsks(string symbol, double max, bool baseValue)
@@ -96,6 +99,7 @@ Console.WriteLine($"Asks: {string.Join(",", sortedAsks.Keys)}");
 ```
 </details>
 
+
 ```cs
 Buy(string symbol, double quantity, double price, Dictionary<string, string> flags)
 ```
@@ -110,6 +114,7 @@ binance.Buy("ETH-BTC", 1.0, 0.001);
 ```
 </details>
 
+
 ```cs
 Sell(string symbol, double quantity, double price, Dictionary<string, string> flags)
 ```
@@ -123,6 +128,7 @@ Submits a sell order.
 binance.Sell("ETH-BTC", 1.0, 0.001);
 ```
 </details>
+
 
 ```cs
 Cancel(string symbol, string orderId, Action<JToken> callback)
@@ -142,6 +148,7 @@ binance.Cancel("ETH-BTC", orderId, response =>
 ```
 </details>
 
+
 ```cs
 OrderStatus(string symbol, string orderId, Action<JToken> callback)
 ```
@@ -160,6 +167,7 @@ binance.OrderStatus("ETH-BTC", orderId, response =>
 ```
 </details>
 
+
 ```cs
 OpenOrders(string symbol, Action<JToken> callback)
 ```
@@ -177,6 +185,7 @@ binance.OpenOrders("ETH-BTC", response =>
 ```
 </details>
 
+
 ```cs
 AllOrders(string symbol, Action<JToken> callback)
 ```
@@ -193,6 +202,7 @@ binance.AllOrders("ETH-BTC", response =>
 });
 ```
 </details>
+
 
 ```cs
 Depth(string symbol, Action<DepthCache> callback)
@@ -213,6 +223,7 @@ binance.Depth("ETH-BTC", depth =>
 ```
 </details>
 
+
 ```cs
 Prices(Action<Dictionary<string, double>> callback)
 ```
@@ -229,6 +240,7 @@ binance.Prices(prices =>
 });
 ```
 </details>
+
 
 ```cs
 BookTickers(Action<Dictionary<string, BookPrice>> callback)
@@ -247,6 +259,7 @@ binance.BookTickers(tickers =>
 ```
 </details>
 
+
 ```cs
 PreviousDay(string symbol, Action<JToken> callback)
 ```
@@ -263,6 +276,7 @@ binance.PreviousDay("ETH-BTC", response =>
 });
 ```
 </details>
+
 
 ```cs
 Account(Action<JToken> callback)
@@ -281,6 +295,7 @@ binance.Account(response =>
 ```
 </details>
 
+
 ```cs
 Balance(Action<Dictionary<string, Balance>> callback)
 ```
@@ -297,6 +312,7 @@ binance.Balance(balances =>
 });
 ```
 </details>
+
 
 ```cs
 Trades(string symbol, Action<JToken> callback)
@@ -315,6 +331,7 @@ binance.Trades("ETH-BTC", response =>
 ```
 </details>
 
+
 ### Streams available
 
 ```cs
@@ -331,6 +348,7 @@ binance.DepthStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
 });
 ```
 </details>
+
 
 Opens a stream that invokes the callback when data is received on any of the specified symbols.
 
@@ -349,6 +367,7 @@ binance.DepthCacheStream(new[] { "ETH-BTC", "LTC-BTC" }, (symbol, depth) =>
 ```
 </details>
 
+
 Opens a depth cache stream that invokes the callback when data is received on any of the specified symbols.
 
 ```cs
@@ -365,6 +384,7 @@ binance.TradesStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
 });
 ```
 </details>
+
 
 Opens a trades stream that invokes the callback when data is received on any of the specified symbols.
 
@@ -384,6 +404,7 @@ binance.Chart(new[] {"ETH-BTC", "LTC-BTC"}, 9999, (response, interval, ohlcDict)
 });
 ```
 </details>
+
 
 ### Further info
 
