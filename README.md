@@ -30,8 +30,6 @@ binance.Sell("ETH-BTC", 1.0, 0.0015)
 DepthCache(string symbol)
 ```
 
-Returns the depth cache of the symbol.
-
 <details>
  <summary>View Example</summary>
  
@@ -44,12 +42,12 @@ Console.WriteLine($"Asks: {depthCache.Asks.Keys.Count}, Bids: {depthCache.Bids.K
 ```
 </details>
 
+Returns the depth cache of the symbol.
+
 
 ```cs
 DepthVolume(string symbol)
 ```
-
-Returns the depth volume of the symbol.
 
 <details>
  <summary>View Example</summary>
@@ -63,13 +61,12 @@ Console.WriteLine($"Bids: {volume.Bids}, Asks: {volume.Asks}, BidQuantity: {volu
 ```
 </details>
 
+Returns the depth volume of the symbol.
+
 
 ```cs
 SortBids(string symbol, double max, bool baseValue)
 ```
-
-Sorts all bids then collects them up until the max number of bids has been collected.
-
 <details>
  <summary>View Example</summary>
  
@@ -81,13 +78,12 @@ Console.WriteLine($"Bids: {string.Join(",", sortedBids.Keys)}");
 ```
 </details>
 
+Sorts all bids then collects them up until the max number of bids has been collected.
+
 
 ```cs
 SortAsks(string symbol, double max, bool baseValue)
 ```
-
-Sorts all asks then collects them up until the max number of asks has been collected.
-
 <details>
  <summary>View Example</summary>
  
@@ -99,12 +95,12 @@ Console.WriteLine($"Asks: {string.Join(",", sortedAsks.Keys)}");
 ```
 </details>
 
+Sorts all asks then collects them up until the max number of asks has been collected.
+
 
 ```cs
 Buy(string symbol, double quantity, double price, Dictionary<string, string> flags)
 ```
-
-Submits a buy order.
 
 <details>
  <summary>View Example</summary>
@@ -114,12 +110,12 @@ binance.Buy("ETH-BTC", 1.0, 0.001);
 ```
 </details>
 
+Submits a buy order.
+
 
 ```cs
 Sell(string symbol, double quantity, double price, Dictionary<string, string> flags)
 ```
-
-Submits a sell order.
 
 <details>
  <summary>View Example</summary>
@@ -129,12 +125,12 @@ binance.Sell("ETH-BTC", 1.0, 0.001);
 ```
 </details>
 
+Submits a sell order.
+
 
 ```cs
 Cancel(string symbol, string orderId, Action<JToken> callback)
 ```
-
-Cancels an order.
 
 <details>
  <summary>View Example</summary>
@@ -148,12 +144,12 @@ binance.Cancel("ETH-BTC", orderId, response =>
 ```
 </details>
 
+Cancels an order.
+
 
 ```cs
 OrderStatus(string symbol, string orderId, Action<JToken> callback)
 ```
-
-Returns the status of an open order.
 
 <details>
  <summary>View Example</summary>
@@ -167,12 +163,12 @@ binance.OrderStatus("ETH-BTC", orderId, response =>
 ```
 </details>
 
+Returns the status of an open order.
+
 
 ```cs
 OpenOrders(string symbol, Action<JToken> callback)
 ```
-
-Returns a list of all open orders.
 
 <details>
  <summary>View Example</summary>
@@ -185,12 +181,12 @@ binance.OpenOrders("ETH-BTC", response =>
 ```
 </details>
 
+Returns a list of all open orders.
+
 
 ```cs
 AllOrders(string symbol, Action<JToken> callback)
 ```
-
-Returns a list of all orders from the account.
 
 <details>
  <summary>View Example</summary>
@@ -203,12 +199,12 @@ binance.AllOrders("ETH-BTC", response =>
 ```
 </details>
 
+Returns a list of all orders from the account.
+
 
 ```cs
 Depth(string symbol, Action<DepthCache> callback)
 ```
-
-Returns the depth of a symbol.
 
 <details>
  <summary>View Example</summary>
@@ -223,12 +219,12 @@ binance.Depth("ETH-BTC", depth =>
 ```
 </details>
 
+Returns the depth of a symbol.
+
 
 ```cs
 Prices(Action<Dictionary<string, double>> callback)
 ```
-
-Returns all price data.
 
 <details>
  <summary>View Example</summary>
@@ -241,12 +237,12 @@ binance.Prices(prices =>
 ```
 </details>
 
+Returns all price data.
+
 
 ```cs
 BookTickers(Action<Dictionary<string, BookPrice>> callback)
 ```
-
-Returns all book tickers.
 
 <details>
  <summary>View Example</summary>
@@ -259,12 +255,12 @@ binance.BookTickers(tickers =>
 ```
 </details>
 
+Returns all book tickers.
+
 
 ```cs
 PreviousDay(string symbol, Action<JToken> callback)
 ```
-
-Returns the 24hr ticker price change statistics.
 
 <details>
  <summary>View Example</summary>
@@ -277,12 +273,12 @@ binance.PreviousDay("ETH-BTC", response =>
 ```
 </details>
 
+Returns the 24hr ticker price change statistics.
+
 
 ```cs
 Account(Action<JToken> callback)
 ```
-
-Get the account info associated with the API key & secret.
 
 <details>
  <summary>View Example</summary>
@@ -295,12 +291,12 @@ binance.Account(response =>
 ```
 </details>
 
+Get the account info associated with the API key & secret.
+
 
 ```cs
 Balance(Action<Dictionary<string, Balance>> callback)
 ```
-
-Get the balance of all symbols from the account.
 
 <details>
  <summary>View Example</summary>
@@ -313,12 +309,12 @@ binance.Balance(balances =>
 ```
 </details>
 
+Get the balance of all symbols from the account.
+
 
 ```cs
 Trades(string symbol, Action<JToken> callback)
 ```
-
-Get all trades the account is involved in.
 
 <details>
  <summary>View Example</summary>
@@ -330,6 +326,8 @@ binance.Trades("ETH-BTC", response =>
 });
 ```
 </details>
+
+Get all trades the account is involved in.
 
 
 ### Streams available
@@ -349,8 +347,8 @@ binance.DepthStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
 ```
 </details>
 
-
 Opens a stream that invokes the callback when data is received on any of the specified symbols.
+
 
 ```cs
 DepthCacheStream(string[] symbols, Action<string, DepthCache> callback)
@@ -367,8 +365,8 @@ binance.DepthCacheStream(new[] { "ETH-BTC", "LTC-BTC" }, (symbol, depth) =>
 ```
 </details>
 
-
 Opens a depth cache stream that invokes the callback when data is received on any of the specified symbols.
+
 
 ```cs
 TradesStream(string[] symbols, Action<JToken> callback)
@@ -385,14 +383,12 @@ binance.TradesStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
 ```
 </details>
 
-
 Opens a trades stream that invokes the callback when data is received on any of the specified symbols.
+
 
 ```cs
 Chart(string[] symbols, long interval, Action<JToken, long, Dictionary<long, OpenHighLowClose>> callback)
 ```
-
-Opens a charts stream that invokes the callback when data is received on any of the specified symbols.
 
 <details>
  <summary>View Example</summary>
@@ -404,6 +400,8 @@ binance.Chart(new[] {"ETH-BTC", "LTC-BTC"}, 9999, (response, interval, ohlcDict)
 });
 ```
 </details>
+
+Opens a charts stream that invokes the callback when data is received on any of the specified symbols.
 
 
 ### Further info
