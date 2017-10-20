@@ -23,7 +23,7 @@ namespace Binance.NET.Demo
                 Console.WriteLine($"Error: code - ${exception.Code} | message - ${exception.Message}");
             });
 
-            binance.DefaultExceptionHandler = exceptionHandler;
+            binance.DefaultExceptionCallback = exceptionHandler;
 
             // API call tests
 
@@ -44,7 +44,7 @@ namespace Binance.NET.Demo
             
             var orderId = "";
             
-            binance.Cancel("ETH-BTC", orderId, response =>
+            binance.CancelOrder("ETH-BTC", orderId, response =>
             {
                 Console.WriteLine("Call completed");
                 // Handle cancel response.
@@ -123,7 +123,7 @@ namespace Binance.NET.Demo
                 // Handle trade stream response.
             });
             
-            binance.Chart(new[] {"ETH-BTC", "LTC-BTC"}, 9999, (response, interval, ohlcDict) =>
+            binance.ChartStream(new[] {"ETH-BTC", "LTC-BTC"}, 9999, (response, interval, ohlcDict) =>
             {
                 Console.WriteLine("Call completed");
                 // Handle chart stream.

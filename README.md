@@ -156,7 +156,7 @@ binance.Sell("ETH-BTC", 1.0, 0.001);
 ---
 
 ```cs
-Cancel(string symbol, string orderId, Action<JToken> callback)
+CancelOrder(string symbol, string orderId, Action<CancelOrderResponse> successCallback)
 ```
 
 Cancels an order.
@@ -176,7 +176,7 @@ binance.Cancel("ETH-BTC", orderId, response =>
 ---
 
 ```cs
-OrderStatus(string symbol, string orderId, Action<JToken> callback)
+OrderStatus(string symbol, string orderId, Action<OrderStatusResponse> successCallback)
 ```
 
 Returns the status of an open order.
@@ -196,7 +196,7 @@ binance.OrderStatus("ETH-BTC", orderId, response =>
 ---
 
 ```cs
-OpenOrders(string symbol, Action<JToken> callback)
+OpenOrders(string symbol, Action<OpenOrdersResponse> successCallback)
 ```
 
 Returns a list of all open orders.
@@ -215,7 +215,7 @@ binance.OpenOrders("ETH-BTC", response =>
 ---
 
 ```cs
-AllOrders(string symbol, Action<JToken> callback)
+AllOrders(string symbol, Action<AllOrdersResponse> successCallback)
 ```
 
 Returns a list of all orders from the account.
@@ -293,7 +293,7 @@ binance.BookTickers(tickers =>
 ---
 
 ```cs
-PreviousDay(string symbol, Action<JToken> callback)
+PreviousDay(string symbol, Action<PreviousDayResponse> successCallback)
 ```
 
 Returns the 24hr ticker price change statistics.
@@ -312,7 +312,7 @@ binance.PreviousDay("ETH-BTC", response =>
 ---
 
 ```cs
-Account(Action<JToken> callback)
+Account(Action<AccountResponse> successCallback)
 ```
 
 Get the account info associated with the API key & secret.
@@ -350,7 +350,7 @@ binance.Balance(balances =>
 ---
 
 ```cs
-Trades(string symbol, Action<JToken> callback)
+Trades(string symbol, Action<TradesResponse> successCallback)
 ```
 
 Get all trades the account is involved in.
@@ -377,7 +377,7 @@ All of these functions return a `CancellationTokenSource` instance so you can ca
 ---
 
 ```cs
-DepthStream(string[] symbols, Action<JToken> callback)
+DepthStream(string[] symbols, Action<DepthStreamResponse> successCallback)
 ```
 
 Opens a stream that invokes the callback when data is received on any of the specified symbols.
@@ -415,7 +415,7 @@ binance.DepthCacheStream(new[] { "ETH-BTC", "LTC-BTC" }, (symbol, depth) =>
 ---
 
 ```cs
-TradesStream(string[] symbols, Action<JToken> callback)
+TradesStream(string[] symbols, Action<TradesStreamResponse> successCallback)
 ```
 
 Opens a trades stream that invokes the callback when data is received on any of the specified symbols.
@@ -434,7 +434,7 @@ binance.TradesStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
 ---
 
 ```cs
-Chart(string[] symbols, long interval, Action<JToken, long, Dictionary<long, OpenHighLowClose>> callback)
+ChartStream(string[] symbols, long interval, Action<JToken, long, Dictionary<long, OpenHighLowClose>> successCallback)
 ```
 
 Opens a charts stream that invokes the callback when data is received on any of the specified symbols.
@@ -443,7 +443,7 @@ Opens a charts stream that invokes the callback when data is received on any of 
  <summary>View Example</summary>
  
 ```cs
-binance.Chart(new[] {"ETH-BTC", "LTC-BTC"}, 9999, (response, interval, ohlcDict) =>
+binance.ChartStream(new[] {"ETH-BTC", "LTC-BTC"}, 9999, (response, interval, ohlcDict) =>
 {
     // Handle chart stream.
 });

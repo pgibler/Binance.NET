@@ -23,7 +23,7 @@ namespace Binance.NET
         private readonly string _apiSecret;
 
         private Action<JToken> _executionCallback;
-        private Action<JToken> _balanceCallback;
+        private Action<UserDataStreamResponse> _balanceCallback;
 
         private const string Base = "https://www.binance.com/api/";
         private const string WebsocketBase = "wss://stream.binance.com:9443/ws/";
@@ -130,42 +130,46 @@ namespace Binance.NET
             Order("SELL", symbol, quantity, price, flags);
         }
 
-        public void Cancel(string symbol, string orderId, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void CancelOrder(string symbol, string orderId, Action<CancelOrderResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
                 {"symbol", symbol},
                 {"orderId", orderId}
             };
-            SignedRequest($"{Base}v3/order", query, HttpMethod.Delete, successCallback, exceptionCallback);
+
+            SignedRequest($"{Base}v3/order", query, HttpMethod.Delete, response => successCallback(response.ToObject<CancelOrderResponse>()), exceptionCallback);
         }
 
-        public void OrderStatus(string symbol, string orderId, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void OrderStatus(string symbol, string orderId, Action<OrderStatusResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
                 {"symbol", symbol},
                 {"orderId", orderId}
             };
-            SignedRequest($"{Base}v3/order", query, HttpMethod.Get, successCallback, exceptionCallback);
+
+            SignedRequest($"{Base}v3/order", query, HttpMethod.Get, response => successCallback(response.ToObject<OrderStatusResponse>()), exceptionCallback);
         }
 
-        public void OpenOrders(string symbol, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void OpenOrders(string symbol, Action<OpenOrdersResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
                 {"symbol", symbol}
             };
-            SignedRequest($"{Base}v3/openOrders", query, HttpMethod.Get, successCallback, exceptionCallback);
+
+            SignedRequest($"{Base}v3/openOrders", query, HttpMethod.Get, response => successCallback(response.ToObject<OpenOrdersResponse>()), exceptionCallback);
         }
 
-        public void AllOrders(string symbol, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void AllOrders(string symbol, Action<AllOrdersResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
                 {"symbol", symbol}
             };
-            SignedRequest($"{Base}v3/allOrders", query, HttpMethod.Get, successCallback, exceptionCallback);
+
+            SignedRequest($"{Base}v3/allOrders", query, HttpMethod.Get, response => response.ToObject<AllOrdersResponse>(), exceptionCallback);
         }
 
         public void Depth(string symbol, Action<Depth> successCallback, Action<BinanceApiException> exceptionCallback = null)
@@ -174,56 +178,80 @@ namespace Binance.NET
             {
                 {"symbol", symbol}
             };
-            PublicRequest($"{Base}v1/depth", query, HttpMethod.Get, o =>
-            {
-                successCallback(DepthData(o));
-            }, exceptionCallback);
+
+            PublicRequest($"{Base}v1/depth", query, HttpMethod.Get, response => successCallback(ConvertToDepth(response)), exceptionCallback);
         }
 
         public void Prices(Action<Dictionary<string, double>> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
-            Request($"{Base}v1/ticker/allPrices", string.Empty, HttpMethod.Get, null, o =>
+            var responseCallback = new Action<JToken>(response =>
             {
-                successCallback(PriceData(o));
-            }, exceptionCallback);
+                var prices = new Dictionary<string, double>();
+                foreach (var token in response)
+                {
+                    var symbol = Convert.ToString(token["symbol"].ToString());
+                    var price = Convert.ToDouble(token["price"].ToString());
+
+                    prices[symbol] = price;
+                }
+                successCallback(prices);
+            });
+
+            Request($"{Base}v1/ticker/allPrices", string.Empty, HttpMethod.Get, null, responseCallback, exceptionCallback);
         }
 
         public void BookTickers(Action<Dictionary<string, BookPrice>> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
-            Request($"{Base}v1/ticker/allBookTickers", string.Empty, HttpMethod.Get, null, o =>
+            var responseCallback = new Action<JToken>(response =>
             {
-                successCallback(BookPriceData(o));
-            }, exceptionCallback);
+                var prices = new Dictionary<string, BookPrice>();
+                foreach (var token in response)
+                {
+                    var symbol = Convert.ToString(token["symbol"]);
+                    var bidPrice = Convert.ToDouble(token["bidPrice"].ToString());
+                    var bidQty = Convert.ToDouble(token["bidQty"].ToString());
+                    var askPrice = Convert.ToDouble(token["askPrice"].ToString());
+                    var askQty = Convert.ToDouble(token["askQty"].ToString());
+
+                    prices[symbol] = new BookPrice
+                    {
+                        BidPrice = bidPrice,
+                        Bids = bidQty,
+                        AskPrice = askPrice,
+                        Asks = askQty
+                    };
+                }
+                successCallback(prices);
+            });
+
+            Request($"{Base}v1/ticker/allBookTickers", string.Empty, HttpMethod.Get, null, responseCallback, exceptionCallback);
         }
-        public void PreviousDay(string symbol, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void PreviousDay(string symbol, Action<PreviousDayResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
                 {"symbol", symbol}
             };
-            PublicRequest($"{Base}v1/ticker/24hr", query, HttpMethod.Get, successCallback, exceptionCallback);
+            PublicRequest($"{Base}v1/ticker/24hr", query, HttpMethod.Get, response => response.ToObject<PreviousDayResponse>(), exceptionCallback);
         }
 
-        public void Account(Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void Account(Action<AccountResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
-            SignedRequest($"{Base}v3/account", new Dictionary<string, string>(), HttpMethod.Get, successCallback, exceptionCallback);
+            SignedRequest($"{Base}v3/account", new Dictionary<string, string>(), HttpMethod.Get, response => response.ToObject<AccountResponse>(), exceptionCallback);
         }
 
         public void Balance(Action<Dictionary<string, Balance>> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
-            SignedRequest($"{Base}v3/account", new Dictionary<string, string>(), HttpMethod.Get, o =>
-            {
-                successCallback(BalanceData(o));
-            }, exceptionCallback);
+            SignedRequest($"{Base}v3/account", new Dictionary<string, string>(), HttpMethod.Get, response => response.ToObject<List<Balance>>(), exceptionCallback);
         }
 
-        public void Trades(string symbol, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void Trades(string symbol, Action<TradesResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
                 {"symbol", symbol}
             };
-            SignedRequest($"{Base}v3/myTrades", query, HttpMethod.Get, successCallback, exceptionCallback);
+            SignedRequest($"{Base}v3/myTrades", query, HttpMethod.Get, response => response.ToObject<TradesResponse>(), exceptionCallback);
         }
 
         public OpenHighLowCloseChart OpenHighLowClose(Dictionary<long, OpenHighLowClose> chart)
@@ -242,7 +270,7 @@ namespace Binance.NET
             return result;
         }
 
-        public void Candlesticks(string symbol, string interval, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void Candlesticks(string symbol, string interval, Action<CandlesticksResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
@@ -250,12 +278,12 @@ namespace Binance.NET
                 {"interval", interval}
             };
 
-            PublicRequest($"{Base}v1/klines", query, HttpMethod.Get, successCallback, exceptionCallback);
+            PublicRequest($"{Base}v1/klines", query, HttpMethod.Get, response => response.ToObject<CandlesticksResponse>(), exceptionCallback);
         }
 
         private string _listenKey;
 
-        public CancellationTokenSource UserDataStream(Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback=null, Action<JToken> executionCallback=null)
+        public CancellationTokenSource UserDataStream(Action<UserDataStreamResponse> successCallback, Action<BinanceApiException> exceptionCallback=null, Action<JToken> executionCallback=null)
         {
             return StreamWithCancellationToken(source =>
             {
@@ -276,13 +304,13 @@ namespace Binance.NET
             });
         }
 
-        public CancellationTokenSource DepthStream(string[] symbols, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback=null)
+        public CancellationTokenSource DepthStream(string[] symbols, Action<DepthStreamResponse> successCallback, Action<BinanceApiException> exceptionCallback=null)
         {
             return StreamWithCancellationToken(source =>
             {
                 foreach (var symbol in symbols)
                 {
-                    Subscribe($"{symbol.ToLower()}@depth", source.Token, successCallback, exceptionCallback);
+                    Subscribe($"{symbol.ToLower()}@depth", source.Token, response => response.ToObject<DepthStreamResponse>(), exceptionCallback);
                 }
             });
         }
@@ -309,7 +337,7 @@ namespace Binance.NET
                     {
                         var lastUpdatedId = Convert.ToInt32(json["lastUpdateId"].ToString());
                         Info[symbol].FirstUpdatedId = lastUpdatedId;
-                        DepthCacheData[symbol] = DepthData(json);
+                        DepthCacheData[symbol] = ConvertToDepth(json);
                         foreach (var depth in MessageQueue[symbol])
                         {
                             DepthHandler(depth, lastUpdatedId);
@@ -321,18 +349,18 @@ namespace Binance.NET
             });
         }
 
-        public CancellationTokenSource TradesStream(string[] symbols, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback=null)
+        public CancellationTokenSource TradesStream(string[] symbols, Action<TradesStreamResponse> successCallback, Action<BinanceApiException> exceptionCallback=null)
         {
             return StreamWithCancellationToken(source =>
             {
                 foreach (var symbol in symbols)
                 {
-                    Subscribe($"{symbol.ToLower()}@aggTrade", source.Token, successCallback, exceptionCallback);
+                    Subscribe($"{symbol.ToLower()}@aggTrade", source.Token, response => response.ToObject<TradesStreamResponse>(), exceptionCallback);
                 }
             });
         }
 
-        public CancellationTokenSource Chart(string[] symbols, long interval, Action<JToken, long, Dictionary<long, OpenHighLowClose>> successCallback, Action<BinanceApiException> exceptionCallback=null)
+        public CancellationTokenSource ChartStream(string[] symbols, long interval, Action<JToken, long, Dictionary<long, OpenHighLowClose>> successCallback, Action<BinanceApiException> exceptionCallback=null)
         {
             return StreamWithCancellationToken(source =>
             {
@@ -396,13 +424,13 @@ namespace Binance.NET
             });
         }
 
-        public CancellationTokenSource CandlesticksStream(string[] symbols, long interval, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback=null)
+        public CancellationTokenSource CandlesticksStream(string[] symbols, long interval, Action<CandlesticksStreamResponse> successCallback, Action<BinanceApiException> exceptionCallback=null)
         {
             return StreamWithCancellationToken(source =>
             {
                 foreach (var symbol in symbols)
                 {
-                    Subscribe($"{symbol.ToLower()}@kline_${interval}", source.Token, successCallback, exceptionCallback);
+                    Subscribe($"{symbol.ToLower()}@kline_${interval}", source.Token, response => response.ToObject<CandlesticksStreamResponse>(), exceptionCallback);
                 }
             });
         }
@@ -451,7 +479,7 @@ namespace Binance.NET
             var type = userData["e"].ToString();
             if (type == "outboundAccountInfo")
             {
-                _balanceCallback(userData);
+                _balanceCallback(userData.ToObject<UserDataStreamResponse>());
             }
             else if (type == "executionReport")
             {
@@ -553,7 +581,7 @@ namespace Binance.NET
             ApiRequest(url, query, method, successCallback, exceptionCallback);
         }
         
-        private void Order(string side, string symbol, double quantity=1, double price=0.00000001, Dictionary<string, string> flags=null, Action<JToken> successCallback=null, Action<BinanceApiException> exceptionCallback=null)
+        private void Order(string side, string symbol, double quantity=1, double price=0.00000001, Dictionary<string, string> flags=null, Action<OrderResponse> successCallback=null, Action<BinanceApiException> exceptionCallback=null)
         {
             var query = new Dictionary<string, string>
             {
@@ -572,8 +600,8 @@ namespace Binance.NET
                 CopyDictionaryKey(flags, query, "icebergQty");
                 CopyDictionaryKey(flags, query, "stopPrice");
             }
-
-            SignedRequest($"{Base}v3/order", query, HttpMethod.Post, successCallback, exceptionCallback);
+            
+            SignedRequest($"{Base}v3/order", query, HttpMethod.Post, response => { successCallback?.Invoke(response.ToObject<OrderResponse>()); }, exceptionCallback);
         }
 
         private async void Subscribe(string endpoint, CancellationToken cancellationToken, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback=null)
@@ -611,59 +639,6 @@ namespace Binance.NET
                     }
                 }
             }
-        }
-
-        private Dictionary<string, double> PriceData(JToken data)
-        {
-            var prices = new Dictionary<string, double>();
-            foreach (var token in data)
-            {
-                var symbol = Convert.ToString(token["symbol"].ToString());
-                var price = Convert.ToDouble(token["price"].ToString());
-
-                prices[symbol] = price;
-            }
-            return prices;
-        }
-
-        private Dictionary<string, BookPrice> BookPriceData(JToken data)
-        {
-            var prices = new Dictionary<string, BookPrice>();
-            foreach (var token in data)
-            {
-                var symbol = Convert.ToString(token["symbol"]);
-                var bidPrice = Convert.ToDouble(token["bidPrice"].ToString());
-                var bidQty = Convert.ToDouble(token["bidQty"].ToString());
-                var askPrice = Convert.ToDouble(token["askPrice"].ToString());
-                var askQty = Convert.ToDouble(token["askQty"].ToString());
-
-                prices[symbol] = new BookPrice
-                {
-                    BidPrice = bidPrice,
-                    Bids = bidQty,
-                    AskPrice = askPrice,
-                    Asks = askQty
-                };
-            }
-            return prices;
-        }
-
-        private Dictionary<string, Balance> BalanceData(JToken data)
-        {
-            var balances = new Dictionary<string, Balance>();
-            foreach(var userBalance in data["balances"])
-            {
-                var asset = userBalance["asset"];
-                var free = userBalance["free"];
-                var locked = userBalance["locked"];
-                var balance = new Balance
-                {
-                    Available = Convert.ToDouble(free.ToString()),
-                    OnOrder = Convert.ToDouble(locked.ToString())
-                };
-                balances[Convert.ToString(asset)] = balance;
-            }
-            return balances;
         }
 
         private void KlineData(string symbol, long interval, JToken ticks)
@@ -742,7 +717,7 @@ namespace Binance.NET
             }
         }
 
-        private Depth DepthData(JToken depth)
+        private Depth ConvertToDepth(JToken depth)
         {
             var cache = new Depth();
             foreach (var jToken in depth["bids"])
