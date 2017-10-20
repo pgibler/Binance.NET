@@ -71,7 +71,7 @@ namespace Binance.NET
         {
             var count = 0;
             DepthCache cache = DepthCacheData[symbol];
-            var obj = new Dictionary<double, double>();
+            var sortedBids = new Dictionary<double, double>();
             var bids = cache.Bids;
             var sorted = bids.Keys.ToList();
             sorted.Sort();
@@ -79,25 +79,25 @@ namespace Binance.NET
             {
                 if (!baseValue)
                 {
-                    obj[price] = bids[price];
+                    sortedBids[price] = bids[price];
                 }
                 else
                 {
-                    obj[price] = bids[price] * price;
+                    sortedBids[price] = bids[price] * price;
                 }
                 if (++count > max)
                 {
                     break;
                 }
             }
-            return obj;
+            return sortedBids;
         }
 
         public Dictionary<double, double> SortAsks(string symbol, double max = Double.PositiveInfinity, bool baseValue = false)
         {
             var count = 0;
             DepthCache cache = DepthCacheData[symbol];
-            var obj = new Dictionary<double, double>();
+            var sortedAsks = new Dictionary<double, double>();
             var asks = cache.Asks;
             var sorted = asks.Keys.ToList();
             sorted.Sort();
@@ -105,18 +105,18 @@ namespace Binance.NET
             {
                 if (!baseValue)
                 {
-                    obj[price] = asks[price];
+                    sortedAsks[price] = asks[price];
                 }
                 else
                 {
-                    obj[price] = asks[price] * price;
+                    sortedAsks[price] = asks[price] * price;
                 }
                 if (++count > max)
                 {
                     break;
                 }
             }
-            return obj;
+            return sortedAsks;
         }
 
         public void Buy(string symbol, double quantity, double price, Dictionary<string, string> flags=null)
@@ -200,7 +200,7 @@ namespace Binance.NET
             {
                 {"symbol", symbol}
             };
-            PublicRequest($"{Base}v1/depth", query, callback, HttpMethod.Get);
+            PublicRequest($"{Base}v1/ticker/24hr", query, callback, HttpMethod.Get);
         }
 
         public void Account(Action<JToken> callback)
