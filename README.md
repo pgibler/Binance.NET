@@ -26,6 +26,10 @@ binance.Sell("ETH-BTC", 1.0, 0.0015)
 
 ### APIs available
 
+Included in Binance.NET are the following API calls. All of these functions are members of the `BinanceApi` class.
+
+---
+
 ```cs
 DepthCache(string symbol)
 ```
@@ -44,6 +48,7 @@ Console.WriteLine($"Asks: {depthCache.Asks.Keys.Count}, Bids: {depthCache.Bids.K
 
 Returns the depth cache of the symbol.
 
+---
 
 ```cs
 DepthVolume(string symbol)
@@ -63,6 +68,7 @@ Console.WriteLine($"Bids: {volume.Bids}, Asks: {volume.Asks}, BidQuantity: {volu
 
 Returns the depth volume of the symbol.
 
+---
 
 ```cs
 SortBids(string symbol, double max, bool baseValue)
@@ -80,6 +86,7 @@ Console.WriteLine($"Bids: {string.Join(",", sortedBids.Keys)}");
 
 Sorts all bids then collects them up until the max number of bids has been collected.
 
+---
 
 ```cs
 SortAsks(string symbol, double max, bool baseValue)
@@ -97,6 +104,7 @@ Console.WriteLine($"Asks: {string.Join(",", sortedAsks.Keys)}");
 
 Sorts all asks then collects them up until the max number of asks has been collected.
 
+---
 
 ```cs
 Buy(string symbol, double quantity, double price, Dictionary<string, string> flags)
@@ -112,6 +120,7 @@ binance.Buy("ETH-BTC", 1.0, 0.001);
 
 Submits a buy order.
 
+---
 
 ```cs
 Sell(string symbol, double quantity, double price, Dictionary<string, string> flags)
@@ -127,6 +136,7 @@ binance.Sell("ETH-BTC", 1.0, 0.001);
 
 Submits a sell order.
 
+---
 
 ```cs
 Cancel(string symbol, string orderId, Action<JToken> callback)
@@ -146,6 +156,7 @@ binance.Cancel("ETH-BTC", orderId, response =>
 
 Cancels an order.
 
+---
 
 ```cs
 OrderStatus(string symbol, string orderId, Action<JToken> callback)
@@ -165,6 +176,7 @@ binance.OrderStatus("ETH-BTC", orderId, response =>
 
 Returns the status of an open order.
 
+---
 
 ```cs
 OpenOrders(string symbol, Action<JToken> callback)
@@ -183,6 +195,7 @@ binance.OpenOrders("ETH-BTC", response =>
 
 Returns a list of all open orders.
 
+---
 
 ```cs
 AllOrders(string symbol, Action<JToken> callback)
@@ -201,6 +214,7 @@ binance.AllOrders("ETH-BTC", response =>
 
 Returns a list of all orders from the account.
 
+---
 
 ```cs
 Depth(string symbol, Action<DepthCache> callback)
@@ -221,6 +235,7 @@ binance.Depth("ETH-BTC", depth =>
 
 Returns the depth of a symbol.
 
+---
 
 ```cs
 Prices(Action<Dictionary<string, double>> callback)
@@ -239,6 +254,7 @@ binance.Prices(prices =>
 
 Returns all price data.
 
+---
 
 ```cs
 BookTickers(Action<Dictionary<string, BookPrice>> callback)
@@ -257,6 +273,7 @@ binance.BookTickers(tickers =>
 
 Returns all book tickers.
 
+---
 
 ```cs
 PreviousDay(string symbol, Action<JToken> callback)
@@ -275,6 +292,7 @@ binance.PreviousDay("ETH-BTC", response =>
 
 Returns the 24hr ticker price change statistics.
 
+---
 
 ```cs
 Account(Action<JToken> callback)
@@ -293,6 +311,7 @@ binance.Account(response =>
 
 Get the account info associated with the API key & secret.
 
+---
 
 ```cs
 Balance(Action<Dictionary<string, Balance>> callback)
@@ -311,6 +330,7 @@ binance.Balance(balances =>
 
 Get the balance of all symbols from the account.
 
+---
 
 ```cs
 Trades(string symbol, Action<JToken> callback)
@@ -329,6 +349,7 @@ binance.Trades("ETH-BTC", response =>
 
 Get all trades the account is involved in.
 
+---
 
 ### Streams available
 
@@ -349,6 +370,7 @@ binance.DepthStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
 
 Opens a stream that invokes the callback when data is received on any of the specified symbols.
 
+---
 
 ```cs
 DepthCacheStream(string[] symbols, Action<string, DepthCache> callback)
@@ -367,6 +389,7 @@ binance.DepthCacheStream(new[] { "ETH-BTC", "LTC-BTC" }, (symbol, depth) =>
 
 Opens a depth cache stream that invokes the callback when data is received on any of the specified symbols.
 
+---
 
 ```cs
 TradesStream(string[] symbols, Action<JToken> callback)
@@ -385,6 +408,7 @@ binance.TradesStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
 
 Opens a trades stream that invokes the callback when data is received on any of the specified symbols.
 
+---
 
 ```cs
 Chart(string[] symbols, long interval, Action<JToken, long, Dictionary<long, OpenHighLowClose>> callback)
