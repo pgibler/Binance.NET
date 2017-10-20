@@ -27,7 +27,7 @@ namespace Binance.NET
 
         private const string Base = "https://www.binance.com/api/";
         private const string WebsocketBase = "wss://stream.binance.com:9443/ws/";
-        private static readonly Dictionary<string, DepthCache> DepthCacheData = new Dictionary<string, DepthCache>();
+        private static readonly Dictionary<string, Depth> DepthCacheData = new Dictionary<string, Depth>();
 
         private static readonly Dictionary<string, IList<JToken>> MessageQueue = new Dictionary<string, IList<JToken>>();
         private static readonly Dictionary<string, Info> Info = new Dictionary<string, Info>();
@@ -37,14 +37,14 @@ namespace Binance.NET
 
         private static readonly IList<CancellationTokenSource> CancellationTokenSources = new List<CancellationTokenSource>();
 
-        public DepthCache DepthCache(string symbol)
+        public Depth DepthCache(string symbol)
         {
-            return DepthCacheData.ContainsKey(symbol) ? DepthCacheData[symbol] : new DepthCache();
+            return DepthCacheData.ContainsKey(symbol) ? DepthCacheData[symbol] : new Depth();
         }
 
         public DepthVolume DepthVolume(string symbol)
         {
-            var cache = DepthCacheData[symbol];
+            var cache = DepthCache(symbol);
             double bidBase = 0, askBase = 0, bidQty = 0, askQty = 0;
             foreach (var price in cache.Bids.Keys)
             {
@@ -62,15 +62,15 @@ namespace Binance.NET
             {
                 Bids = bidBase,
                 Asks = askBase,
-                BidQty = bidQty,
-                AskQty = askQty
+                BidQuantity = bidQty,
+                AskQuantity = askQty
             };
         }
 
         public Dictionary<double, double> SortBids(string symbol, double max = Double.PositiveInfinity, bool baseValue = false)
         {
             var count = 0;
-            DepthCache cache = DepthCacheData[symbol];
+            Depth cache = DepthCache(symbol);
             var sortedBids = new Dictionary<double, double>();
             var bids = cache.Bids;
             var sorted = bids.Keys.ToList();
@@ -96,7 +96,7 @@ namespace Binance.NET
         public Dictionary<double, double> SortAsks(string symbol, double max = Double.PositiveInfinity, bool baseValue = false)
         {
             var count = 0;
-            DepthCache cache = DepthCacheData[symbol];
+            Depth cache = DepthCache(symbol);
             var sortedAsks = new Dictionary<double, double>();
             var asks = cache.Asks;
             var sorted = asks.Keys.ToList();
@@ -167,7 +167,7 @@ namespace Binance.NET
             SignedRequest($"{Base}v3/allOrders", query, callback, HttpMethod.Get);
         }
 
-        public void Depth(string symbol, Action<DepthCache> callback)
+        public void Depth(string symbol, Action<Depth> callback)
         {
             var query = new Dictionary<string, string>
             {
@@ -286,7 +286,7 @@ namespace Binance.NET
             });
         }
 
-        public CancellationTokenSource DepthCacheStream(string[] symbols, Action<string, DepthCache> callback)
+        public CancellationTokenSource DepthCacheStream(string[] symbols, Action<string, Depth> callback)
         {
             return StreamWithCancellationToken(source =>
             {
@@ -294,7 +294,7 @@ namespace Binance.NET
                 {
                     if (!Info.ContainsKey(symbol)) { Info[symbol] = new Info(); }
                     Info[symbol].FirstUpdatedId = 0;
-                    DepthCacheData[symbol] = new DepthCache();
+                    DepthCacheData[symbol] = new Depth();
                     MessageQueue[symbol] = new List<JToken>();
                     Subscribe($"{symbol.ToLower()}@depth", depth =>
                     {
@@ -695,9 +695,9 @@ namespace Binance.NET
             }
         }
 
-        private DepthCache DepthData(JToken depth)
+        private Depth DepthData(JToken depth)
         {
-            var cache = new DepthCache();
+            var cache = new Depth();
             foreach (var jToken in depth["bids"])
             {
                 var bid = (JArray) jToken;
