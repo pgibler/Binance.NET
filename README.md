@@ -24,6 +24,17 @@ binance.Buy("ETH-BTC", 1.0, 0.001);
 binance.Sell("ETH-BTC", 1.0, 0.0015)
 ```
 
+### Error handling
+
+In some cases, the API request may fail because of any number of reasons. In the event that the Binance API responds with an error message, the success callback is skipped on the API call and an error callback is invoked. You can set up a custom error handler in 2 ways:
+
+- As a parameter of the API call. This is usually the last parameter of the method.
+- Using the `DefaultExceptionCallback` property of the `BinanceApi` class.
+
+You can also mix both methods. If you specify a `DefaultExceptionCallback`, it will be used for all functions exception where you explicitly define an exception callback. This way you can handle exceptions in a general use case and then specifically handle ones that require custom behavior.
+
+For testing purposes, you can choose to eschew the usage of these as you try out the API methods. It is recommended you use them to see what goes wrong when you are testing.
+
 ### APIs available
 
 Included in Binance.NET are the following API calls. All of these functions are members of the `BinanceApi` class.

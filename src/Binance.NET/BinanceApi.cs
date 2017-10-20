@@ -36,7 +36,7 @@ namespace Binance.NET
         private static readonly Dictionary<string, Dictionary<long, OpenHighLowClose>> OpenHighLowCloseLatest = new Dictionary<string, Dictionary<long, OpenHighLowClose>>();
 
         private static readonly IList<CancellationTokenSource> CancellationTokenSources = new List<CancellationTokenSource>();
-        public Action<BinanceApiException> DefaultExceptionHandler { get; set; }
+        public Action<BinanceApiException> DefaultExceptionCallback { get; set; }
 
         public Depth DepthCache(string symbol)
         {
@@ -514,7 +514,7 @@ namespace Binance.NET
                 }
                 else
                 {
-                    DefaultExceptionHandler?.Invoke(exception);
+                    DefaultExceptionCallback?.Invoke(exception);
                 }
             }
             else
@@ -602,7 +602,7 @@ namespace Binance.NET
                         }
                         else
                         {
-                            DefaultExceptionHandler?.Invoke(binanceApiException);
+                            DefaultExceptionCallback?.Invoke(binanceApiException);
                         }
                     }
                     else
