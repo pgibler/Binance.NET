@@ -11,7 +11,7 @@ dotnet build
 
 ### Usage
 
-To run Binance.NET in your C# application, you need your API key & secret handy. Once you get those from your account on binance, you can initialize the `Binance` object as such:
+To run Binance.NET in your C# application, you need your API key & secret handy. Once you get those from your account on binance, you can initialize the `BinanceApi` object as such:
 
 ```cs
 // Instantiate a binance API service interaction instance.
