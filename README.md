@@ -11,7 +11,11 @@ dotnet build
 
 ### Usage
 
-To run Binance.NET in your C# application, you need your API key & secret handy. Once you get those from your account on binance, you can initialize the `BinanceApi` object as such:
+- Add the DLLs from the build to your project.
+- Reference them from the .csproj file containing the classes that will utilize the `BinanaceApi` class.
+- Retrieve your API key & secret from your account on binance.
+
+Once you have done these steps, to use Binance.NET in your C# application, create an instance of `BinanceApi` and invoke it's functionality from your code:
 
 ```cs
 // Instantiate a binance API service interaction instance.
@@ -110,7 +114,7 @@ Sorts all asks then collects them up until the max number of asks has been colle
  <summary>View Example</summary>
  
 ```cs
-var sortedAsks = binance.SortBids("ETH-BTC");
+var sortedAsks = binance.SortAsks("ETH-BTC");
 
 Console.WriteLine($"Asks: {string.Join(",", sortedAsks.Keys)}");
 // Outputs - "Asks: [50.234,50.235,50.23453,50.23454]"
@@ -446,6 +450,7 @@ binance.Chart(new[] {"ETH-BTC", "LTC-BTC"}, 9999, (response, interval, ohlcDict)
 ```
 </details>
 
+---
 
 ### Further info
 
