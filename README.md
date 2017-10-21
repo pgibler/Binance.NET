@@ -165,7 +165,7 @@ Cancels an order.
  <summary>View Example</summary>
  
 ```cs
-string orderId = "jzp890p1zjaje3a"
+string orderId = 241234;
 binance.Cancel("ETH-BTC", orderId, response =>
 {
   // Handle cancel response.
@@ -185,7 +185,7 @@ Returns the status of an open order.
  <summary>View Example</summary>
  
 ```cs
-string orderId = "jzp890p1zjaje3a"
+string orderId = 241234;
 binance.OrderStatus("ETH-BTC", orderId, response =>
 {
   // Handle cancel response.
