@@ -3,6 +3,8 @@ A .NET Standard 2.0+ wrapper for the Binance API.
 
 ### Build
 
+Building Binance.NET is easy. Just clone the repository and run `dotnet build`.
+
 ```
 git clone https://github.com/pgibler/Binance.NET
 cd Binance.NET/src
