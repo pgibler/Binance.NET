@@ -48,84 +48,6 @@ Included in Binance.NET are the following API calls. All of these functions are 
 ---
 
 ```cs
-DepthCache(string symbol)
-```
-
-Returns the depth cache of the symbol.
-
-<details>
- <summary>View Example</summary>
- 
-```cs
-var depthCache = binance.DepthCache("ETH-BTC");
-
-Console.WriteLine($"Asks: {depthCache.Asks.Keys.Count}, Bids: {depthCache.Bids.Keys.Count}");
-
-// Outputs - "Asks: System.Collections.Generic.Dictionary`2[System.Double,System.Double], Bids: System.Collections.Generic.Dictionary`2[System.Double,System.Double]"
-```
-</details>
-
----
-
-```cs
-DepthVolume(string symbol)
-```
-
-Returns the depth volume of the symbol.
-
-<details>
- <summary>View Example</summary>
- 
-```cs
-var volume = binance.DepthVolume("ETH-BTC");
-
-Console.WriteLine($"Bids: {volume.Bids}, Asks: {volume.Asks}, BidQuantity: {volume.BidQuantity}, AskQuantity: {volume.AskQuantity}");
-
-// Outputs - "Bids: 234113, Asks: 534561, BidQuantity: 2342341.32, AskQuantity: 8942894.234"
-```
-</details>
-
----
-
-```cs
-SortBids(string symbol, double max, bool baseValue)
-```
-
-Sorts all bids then collects them up until the max number of bids has been collected.
-
-<details>
- <summary>View Example</summary>
- 
-```cs
-var sortedBids = binance.SortBids("ETH-BTC");
-
-Console.WriteLine($"Bids: {string.Join(",", sortedBids.Keys)}");
-// Outputs - "Bids: [50.234,50.235,50.23453,50.23454]"
-```
-</details>
-
----
-
-```cs
-SortAsks(string symbol, double max, bool baseValue)
-```
-
-Sorts all asks then collects them up until the max number of asks has been collected.
-
-<details>
- <summary>View Example</summary>
- 
-```cs
-var sortedAsks = binance.SortAsks("ETH-BTC");
-
-Console.WriteLine($"Asks: {string.Join(",", sortedAsks.Keys)}");
-// Outputs - "Asks: [50.234,50.235,50.23453,50.23454]"
-```
-</details>
-
----
-
-```cs
 Buy(string symbol, double quantity, double price, Dictionary<string, string> flags)
 ```
 
@@ -135,7 +57,13 @@ Submits a buy order.
  <summary>View Example</summary>
  
 ```cs
+// Simple buy order.
 binance.Buy("ETH-BTC", 1.0, 0.001);
+
+// Buy order handling the response.
+binance.Buy("ETH-BTC", 1.0, 0.001,
+  response => Console.WriteLine(response.OrderId),
+  exception => Console.WriteLine($"Error message: ${exception.Message}"));
 ```
 </details>
 
@@ -151,7 +79,13 @@ Submits a sell order.
  <summary>View Example</summary>
  
 ```cs
+// Simple sell order.
 binance.Sell("ETH-BTC", 1.0, 0.001);
+
+// Sell order handling the response.
+binance.Sell("ETH-BTC", 1.0, 0.001,
+  response => Console.WriteLine(response.OrderId),
+  exception => Console.WriteLine($"Error message: ${exception.Message}"));
 ```
 </details>
 
@@ -167,18 +101,18 @@ Cancels an order.
  <summary>View Example</summary>
  
 ```cs
-string orderId = 241234;
-binance.Cancel("ETH-BTC", orderId, response =>
-{
-  // Handle cancel response.
-});
+// Cancel order handling success and error responses.
+long orderId = GetOrderId();
+binance.CancelOrder("ETH-BTC", orderId,
+  response => Console.WriteLine($"Order #${response.OrderId} cancelled"),
+  exception => Console.WriteLine("Order failed to cancel"));
 ```
 </details>
 
 ---
 
 ```cs
-OrderStatus(string symbol, string orderId, Action<OrderStatusResponse> successCallback)
+OrderStatus(string symbol, string orderId, Action<OrderResponse> successCallback)
 ```
 
 Returns the status of an open order.
@@ -187,11 +121,11 @@ Returns the status of an open order.
  <summary>View Example</summary>
  
 ```cs
-string orderId = 241234;
-binance.OrderStatus("ETH-BTC", orderId, response =>
-{
-  // Handle cancel response.
-});
+// Order status handling success and error responses.
+long orderId = GetOrderId();
+binance.OrderStatus("ETH-BTC", orderId,
+  response => Console.WriteLine($"Order #${response.OrderId} cancelled"),
+  exception => Console.WriteLine("Order failed to cancel"));
 ```
 </details>
 
@@ -365,6 +299,84 @@ binance.Trades("ETH-BTC", response =>
 {
     // Handle trade response
 });
+```
+</details>
+
+---
+
+```cs
+DepthCache(string symbol)
+```
+
+Returns the depth cache of the symbol.
+
+<details>
+ <summary>View Example</summary>
+ 
+```cs
+var depthCache = binance.DepthCache("ETH-BTC");
+
+Console.WriteLine($"Asks: {depthCache.Asks.Keys.Count}, Bids: {depthCache.Bids.Keys.Count}");
+
+// Outputs - "Asks: System.Collections.Generic.Dictionary`2[System.Double,System.Double], Bids: System.Collections.Generic.Dictionary`2[System.Double,System.Double]"
+```
+</details>
+
+---
+
+```cs
+DepthVolume(string symbol)
+```
+
+Returns the depth volume of the symbol.
+
+<details>
+ <summary>View Example</summary>
+ 
+```cs
+var volume = binance.DepthVolume("ETH-BTC");
+
+Console.WriteLine($"Bids: {volume.Bids}, Asks: {volume.Asks}, BidQuantity: {volume.BidQuantity}, AskQuantity: {volume.AskQuantity}");
+
+// Outputs - "Bids: 234113, Asks: 534561, BidQuantity: 2342341.32, AskQuantity: 8942894.234"
+```
+</details>
+
+---
+
+```cs
+SortBids(string symbol, double max, bool baseValue)
+```
+
+Sorts all bids then collects them up until the max number of bids has been collected.
+
+<details>
+ <summary>View Example</summary>
+ 
+```cs
+var sortedBids = binance.SortBids("ETH-BTC");
+
+Console.WriteLine($"Bids: {string.Join(",", sortedBids.Keys)}");
+// Outputs - "Bids: [50.234,50.235,50.23453,50.23454]"
+```
+</details>
+
+---
+
+```cs
+SortAsks(string symbol, double max, bool baseValue)
+```
+
+Sorts all asks then collects them up until the max number of asks has been collected.
+
+<details>
+ <summary>View Example</summary>
+ 
+```cs
+var sortedAsks = binance.SortAsks("ETH-BTC");
+
+Console.WriteLine($"Asks: {string.Join(",", sortedAsks.Keys)}");
+// Outputs - "Asks: [50.234,50.235,50.23453,50.23454]"
 ```
 </details>
 

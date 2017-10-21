@@ -141,7 +141,7 @@ namespace Binance.NET
             SignedRequest($"{Base}v3/order", query, HttpMethod.Delete, response => successCallback(response.ToObject<CancelOrderResponse>()), exceptionCallback);
         }
 
-        public void OrderStatus(string symbol, string orderId, Action<OrderStatusResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void OrderStatus(string symbol, string orderId, Action<OrderResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
@@ -149,7 +149,7 @@ namespace Binance.NET
                 {"orderId", orderId}
             };
 
-            SignedRequest($"{Base}v3/order", query, HttpMethod.Get, response => successCallback(response.ToObject<OrderStatusResponse>()), exceptionCallback);
+            SignedRequest($"{Base}v3/order", query, HttpMethod.Get, response => successCallback(response.ToObject<OrderResponse>()), exceptionCallback);
         }
 
         public void OpenOrders(string symbol, Action<OpenOrdersResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
