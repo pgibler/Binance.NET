@@ -1,7 +1,7 @@
 # Binance.NET
 A .NET Standard 2.0+ wrapper for the Binance API.
 
-### Installation
+### Build
 
 ```
 git clone https://github.com/pgibler/Binance.NET
