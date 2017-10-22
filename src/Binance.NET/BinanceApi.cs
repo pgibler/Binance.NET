@@ -254,7 +254,7 @@ namespace Binance.NET
             {
                 var account = response.ToObject<AccountResponse>();
                 var balances = account.Balances;
-                successCallback(balances.ToDictionary(balance => balance.Symbol));
+                successCallback(balances.ToDictionary(balance => balance.Asset));
             }, exceptionCallback);
         }
 
@@ -303,16 +303,16 @@ namespace Binance.NET
                 ApiRequest($"{Base}v1/userDataStream", new Dictionary<string, string>(), HttpMethod.Post, async o =>
                 {
                     _listenKey = o["listenKey"].ToString();
-                    await SetInterval(() =>
-                    {
-                        ApiRequest($"{Base}v1/userDataStream", new Dictionary<string, string>(), HttpMethod.Put, jObject => { }, exceptionCallback);
-                    }, TimeSpan.FromSeconds(30));
                     if (executionCallback != null)
                     {
                         _balanceCallback = successCallback;
                         _executionCallback = executionCallback;
                         Subscribe(_listenKey, source.Token, UserDataHandler, exceptionCallback);
                     }
+                    await SetInterval(() =>
+                    {
+                        ApiRequest($"{Base}v1/userDataStream", new Dictionary<string, string>(), HttpMethod.Put, jObject => { }, exceptionCallback);
+                    }, TimeSpan.FromSeconds(30));
                 }, exceptionCallback);
             });
         }

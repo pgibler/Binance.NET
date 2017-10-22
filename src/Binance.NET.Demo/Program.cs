@@ -76,7 +76,7 @@ namespace Binance.NET.Demo
             
             binance.Prices(prices =>
             {
-                Console.WriteLine($"Assets on the market: {prices.Count}. First asset price: Symbol - {prices.First().Key}, Price - {prices.First().Value}");
+                Console.WriteLine($"Assets on the market: {prices.Count}. First asset price: Asset - {prices.First().Key}, Price - {prices.First().Value}");
             });
             
             binance.BookTickers(tickers =>
@@ -148,6 +148,11 @@ namespace Binance.NET.Demo
             binance.ChartStream(new[] {"ETH-BTC", "LTC-BTC"}, 9999, (response, interval, ohlcDict) =>
             {
                 Console.WriteLine("Chart call invoked.");
+            });
+
+            binance.UserDataStream(account =>
+            {
+                Console.WriteLine("User data stream invoked.");
             });
         }
     }
