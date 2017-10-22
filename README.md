@@ -173,7 +173,9 @@ Returns the current depth of a symbol.
  <summary>View Example</summary>
  
 ```cs
-binance.Depth("ETH-BTC", depth => Console.WriteLine($"Asks: {string.Join(",", depth.Asks.Keys)}, Bids: {string.Join(",", depth.Bids.Keys)}"));
+binance.Depth("ETH-BTC", depth => {
+  Console.WriteLine($"Asks: {string.Join(",", depth.Asks.Keys)}, Bids: {string.Join(",", depth.Bids.Keys)}")
+});
 ```
 </details>
 
@@ -189,7 +191,10 @@ Returns all price data.
  <summary>View Example</summary>
  
 ```cs
-binance.Prices(prices => Console.WriteLine($"Assets on the market: {prices.Count}. First asset price: Symbol - {prices.First().Key}, Price - {prices.First().Value}"));
+binance.Prices(prices => {
+  Console.WriteLine($"Assets on the market: {prices.Count}.");
+  Console.WriteLine($"First asset price: Symbol - {prices.First().Key}, Price - {prices.First().Value}");
+});
 ```
 </details>
 
@@ -207,7 +212,8 @@ Returns all book tickers.
 ```cs
 binance.BookTickers(tickers =>
 {
-    Console.WriteLine($"Tickers count: {tickers.Count}, First symbol & ask: {tickers.First().Key} & {tickers.First().Value.AskPrice}");
+    Console.WriteLine($"Tickers count: {tickers.Count}");
+    Console.WriteLine($"First symbol & ask: {tickers.First().Key} & {tickers.First().Value.AskPrice}");
 });
 ```
 </details>
@@ -224,7 +230,9 @@ Returns the 24hr ticker price change statistics.
  <summary>View Example</summary>
  
 ```cs
-binance.PreviousDay("ETH-BTC", previousDay => Console.WriteLine($"24 hour % change - ${previousDay.PriceChangePercent}"));
+binance.PreviousDay("ETH-BTC", previousDay => {
+  Console.WriteLine($"24 hour % change - ${previousDay.PriceChangePercent}")
+});
 ```
 </details>
 
@@ -240,7 +248,9 @@ Get the account info associated with the API key & secret.
  <summary>View Example</summary>
  
 ```cs
-binance.Account(account => Console.WriteLine($"Account can trade: {account.CanTrade}"));
+binance.Account(account => {
+  Console.WriteLine($"Account can trade: {account.CanTrade}")
+});
 ```
 </details>
 
