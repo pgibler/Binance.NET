@@ -210,8 +210,7 @@ Returns all book tickers.
  <summary>View Example</summary>
  
 ```cs
-binance.BookTickers(tickers =>
-{
+binance.BookTickers(tickers => {
     Console.WriteLine($"Tickers count: {tickers.Count}");
     Console.WriteLine($"First symbol & ask: {tickers.First().Key} & {tickers.First().Value.AskPrice}");
 });
