@@ -48,7 +48,7 @@ Included in Binance.NET are the following API calls. All of these functions are 
 ---
 
 ```cs
-Buy(string symbol, double quantity, double price, Dictionary<string, string> flags)
+Buy(string symbol, double quantity, double price)
 ```
 
 Submits a buy order.
@@ -63,14 +63,14 @@ binance.Buy("ETH-BTC", 1.0, 0.001);
 // Buy order handling the response.
 binance.Buy("ETH-BTC", 1.0, 0.001,
   response => Console.WriteLine(response.OrderId),
-  exception => Console.WriteLine($"Error message: ${exception.Message}"));
+  exception => Console.WriteLine($"Error message: {exception.Message}"));
 ```
 </details>
 
 ---
 
 ```cs
-Sell(string symbol, double quantity, double price, Dictionary<string, string> flags)
+Sell(string symbol, double quantity, double price)
 ```
 
 Submits a sell order.
@@ -85,7 +85,7 @@ binance.Sell("ETH-BTC", 1.0, 0.001);
 // Sell order handling the response.
 binance.Sell("ETH-BTC", 1.0, 0.001,
   response => Console.WriteLine(response.OrderId),
-  exception => Console.WriteLine($"Error message: ${exception.Message}"));
+  exception => Console.WriteLine($"Error message: {exception.Message}"));
 ```
 </details>
 
@@ -104,7 +104,7 @@ Cancels an order.
 // Cancel order handling success and error responses.
 long orderId = GetOrderId();
 binance.CancelOrder("ETH-BTC", orderId,
-  response => Console.WriteLine($"Order #${response.OrderId} cancelled"),
+  response => Console.WriteLine($"Order #{response.OrderId} cancelled"),
   exception => Console.WriteLine("Order failed to cancel"));
 ```
 </details>
@@ -124,7 +124,7 @@ Returns the status of an open order.
 // Order status handling success and error responses.
 long orderId = GetOrderId();
 binance.OrderStatus("ETH-BTC", orderId,
-  response => Console.WriteLine($"Order #${response.OrderId} cancelled"),
+  response => Console.WriteLine($"Order #{response.OrderId} has status {response.Status}"),
   exception => Console.WriteLine("Order failed to cancel"));
 ```
 </details>
@@ -141,10 +141,7 @@ Returns a list of all open orders.
  <summary>View Example</summary>
  
 ```cs
-binance.OpenOrders("ETH-BTC", response =>
-{
-  // Handle open orders response
-});
+binance.OpenOrders("ETH-BTC", orders => Console.WriteLine($"First order open: {orders.First().OrderId}"));
 ```
 </details>
 
@@ -160,10 +157,7 @@ Returns a list of all orders from the account.
  <summary>View Example</summary>
  
 ```cs
-binance.AllOrders("ETH-BTC", response =>
-{
-  // Handle all orders response
-});
+binance.AllOrders("ETH-BTC", orders => Console.WriteLine($"First order ever: {orders.First().OrderId}"));
 ```
 </details>
 
@@ -173,18 +167,13 @@ binance.AllOrders("ETH-BTC", response =>
 Depth(string symbol, Action<DepthCache> callback)
 ```
 
-Returns the depth of a symbol.
+Returns the current depth of a symbol.
 
 <details>
  <summary>View Example</summary>
  
 ```cs
-binance.Depth("ETH-BTC", depth =>
-{
-  Console.WriteLine($"Depth - Asks: ${depth.Asks.Keys.Count}, Bids: ${depth.Bids.Keys.Count}");
-});
-
-// Outputs - "Depth - Asks: 15234, Bids: 24892"
+binance.Depth("ETH-BTC", depth => Console.WriteLine($"Asks: {string.Join(",", depth.Asks.Keys)}, Bids: {string.Join(",", depth.Bids.Keys)}"));
 ```
 </details>
 
@@ -200,10 +189,7 @@ Returns all price data.
  <summary>View Example</summary>
  
 ```cs
-binance.Prices(prices =>
-{
-    // Handle price data.
-});
+binance.Prices(prices => Console.WriteLine($"Assets on the market: {prices.Count}. First asset price: Symbol - {prices.First().Key}, Price - {prices.First().Value}"));
 ```
 </details>
 
@@ -221,7 +207,7 @@ Returns all book tickers.
 ```cs
 binance.BookTickers(tickers =>
 {
-    // Handle book tickers
+    Console.WriteLine($"Tickers count: {tickers.Count}, First symbol & ask: {tickers.First().Key} & {tickers.First().Value.AskPrice}");
 });
 ```
 </details>
@@ -238,10 +224,7 @@ Returns the 24hr ticker price change statistics.
  <summary>View Example</summary>
  
 ```cs
-binance.PreviousDay("ETH-BTC", response =>
-{
-    // Handle previous 24 hour response
-});
+binance.PreviousDay("ETH-BTC", previousDay => Console.WriteLine($"24 hour % change - ${previousDay.PriceChangePercent}"));
 ```
 </details>
 
@@ -257,10 +240,7 @@ Get the account info associated with the API key & secret.
  <summary>View Example</summary>
  
 ```cs
-binance.Account(response =>
-{
-    // Handle account response
-});
+binance.Account(account => Console.WriteLine($"Account can trade: {account.CanTrade}"));
 ```
 </details>
 
@@ -276,10 +256,7 @@ Get the balance of all symbols from the account.
  <summary>View Example</summary>
  
 ```cs
-binance.Balance(balances =>
-{
-    // Handle balance information. Stored as k/v pairs.
-});
+binance.Balance(balances => Console.WriteLine($"First asset: {balances.First().Key}"));
 ```
 </details>
 
@@ -295,10 +272,7 @@ Get all trades the account is involved in.
  <summary>View Example</summary>
  
 ```cs
-binance.Trades("ETH-BTC", response =>
-{
-    // Handle trade response
-});
+binance.Trades("ETH-BTC", trades => Console.WriteLine($"First trade price: {trades.First().Price}"));
 ```
 </details>
 
@@ -314,11 +288,9 @@ Returns the depth cache of the symbol.
  <summary>View Example</summary>
  
 ```cs
-var depthCache = binance.DepthCache("ETH-BTC");
-
-Console.WriteLine($"Asks: {depthCache.Asks.Keys.Count}, Bids: {depthCache.Bids.Keys.Count}");
-
-// Outputs - "Asks: System.Collections.Generic.Dictionary`2[System.Double,System.Double], Bids: System.Collections.Generic.Dictionary`2[System.Double,System.Double]"
+var cache = binance.DepthCache("ETH-BTC");
+            
+Console.WriteLine($"Asks: {string.Join(",", cache.Asks.Keys)}, Bids: {string.Join(",", cache.Bids.Keys)}")
 ```
 </details>
 
@@ -336,9 +308,7 @@ Returns the depth volume of the symbol.
 ```cs
 var volume = binance.DepthVolume("ETH-BTC");
 
-Console.WriteLine($"Bids: {volume.Bids}, Asks: {volume.Asks}, BidQuantity: {volume.BidQuantity}, AskQuantity: {volume.AskQuantity}");
-
-// Outputs - "Bids: 234113, Asks: 534561, BidQuantity: 2342341.32, AskQuantity: 8942894.234"
+Console.WriteLine($"Ask volume: {volume.Asks}, Bid volume: {volume.Bids}")
 ```
 </details>
 
@@ -357,7 +327,6 @@ Sorts all bids then collects them up until the max number of bids has been colle
 var sortedBids = binance.SortBids("ETH-BTC");
 
 Console.WriteLine($"Bids: {string.Join(",", sortedBids.Keys)}");
-// Outputs - "Bids: [50.234,50.235,50.23453,50.23454]"
 ```
 </details>
 
@@ -376,7 +345,6 @@ Sorts all asks then collects them up until the max number of asks has been colle
 var sortedAsks = binance.SortAsks("ETH-BTC");
 
 Console.WriteLine($"Asks: {string.Join(",", sortedAsks.Keys)}");
-// Outputs - "Asks: [50.234,50.235,50.23453,50.23454]"
 ```
 </details>
 

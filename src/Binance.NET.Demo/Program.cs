@@ -33,10 +33,12 @@ namespace Binance.NET.Demo
 
             binance.Depth("ETH-BTC", depth =>
             {
-                // Handle depth response
+                Console.WriteLine($"Asks: ${string.Join(",", depth.Asks.Keys)}, Bids: ${string.Join(",", depth.Bids.Keys)}");
             });
                         
             var volume = binance.DepthVolume("ETH-BTC");
+
+            Console.WriteLine($"Ask volume: {volume.Asks}, Bid volume: {volume.Bids}");
             
             var sortedBids = binance.SortBids("ETH-BTC");
             
@@ -44,66 +46,64 @@ namespace Binance.NET.Demo
             
             var orderId = "";
             
-            binance.CancelOrder("ETH-BTC", orderId, response =>
-            {
-                Console.WriteLine("Call completed");
-                // Handle cancel response.
-            });
+            binance.CancelOrder("ETH-BTC", orderId,
+                response =>
+                {
+                    Console.WriteLine($"Order #${response.OrderId} cancelled");
+                },
+                exception =>
+                {
+                    Console.WriteLine($"Error message: {exception.Message}");
+                });
             
             binance.OrderStatus("ETH-BTC", orderId, response =>
             {
-                Console.WriteLine("Call completed");
-                // Handle order status response.
+                Console.WriteLine($"Order #{response.OrderId} has status {response.Status}");
             });
             
-            
-            binance.OpenOrders("ETH-BTC", response =>
+            binance.OpenOrders("ETH-BTC", orders =>
             {
-                Console.WriteLine("Call completed");
-                // Handle open orders response.
+                Console.WriteLine($"First order open: {orders.First().OrderId}");
             });
             
-            binance.AllOrders("ETH-BTC", response =>
+            binance.AllOrders("ETH-BTC", orders =>
             {
-                Console.WriteLine("Call completed");
-                // Handle all orders response.
+                Console.WriteLine($"First order ever: {orders.First().OrderId}");
             });
             
             binance.Prices(prices =>
             {
-                Console.WriteLine("Call completed");
-                // Handle prices.
+                Console.WriteLine($"Assets on the market: {prices.Count}. First asset price: Symbol - {prices.First().Key}, Price - {prices.First().Value}");
             });
             
             binance.BookTickers(tickers =>
             {
-                Console.WriteLine("Call completed");
-                // Handle book tickers.
+                Console.WriteLine($"Tickers count: {tickers.Count}, First symbol & ask: {tickers.First().Key} & {tickers.First().Value.AskPrice}");
             });
             
-            binance.PreviousDay("ETH-BTC", response =>
+            binance.PreviousDay("ETH-BTC", previousDay =>
             {
-                Console.WriteLine("Call completed");
-                // Handle previous 24 hour response.
+                Console.WriteLine($"24 hour % change - ${previousDay.PriceChangePercent}");
             });
             
-            binance.Account(response =>
+            binance.Account(account =>
             {
-                Console.WriteLine("Call completed");
-                // Handle account response.
+                Console.WriteLine($"Account can trade: {account.CanTrade}");
             });
             
             binance.Balance(balances =>
             {
-                Console.WriteLine("Call completed");
-                // Handle balance information. Stored as k/v pairs.
+                Console.WriteLine($"First asset: {balances.First().Key}");
             });
             
-            binance.Trades("ETH-BTC", response =>
+            binance.Trades("ETH-BTC", trades =>
             {
-                Console.WriteLine("Call completed");
-                // Handle trade response.
+                Console.WriteLine($"First trade price: {trades.First().Price}");
             });
+
+            var cache = binance.DepthCache("ETH-BTC");
+            
+            Console.WriteLine($"Asks: {string.Join(",", cache.Asks.Keys)}, Bids: {string.Join(",", cache.Bids.Keys)}");
             
             binance.DepthStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
             {
