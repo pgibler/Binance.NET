@@ -92,7 +92,7 @@ binance.Sell("ETH-BTC", 1.0, 0.001,
 ---
 
 ```cs
-CancelOrder(string symbol, string orderId, Action<CancelOrderResponse> successCallback)
+CancelOrder(string symbol, string orderId)
 ```
 
 Cancels an order.

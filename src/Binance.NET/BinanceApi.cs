@@ -140,7 +140,7 @@ namespace Binance.NET
             Order("SELL", symbol, quantity, price, flags);
         }
 
-        public void CancelOrder(string symbol, string orderId, Action<OrderActionResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void CancelOrder(string symbol, string orderId, Action<OrderActionResponse> successCallback = null, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
