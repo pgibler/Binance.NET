@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace Binance.NET
+﻿namespace Binance.NET
 {
     public class Depth
     {
-        public Dictionary<double, double> Bids { get; set; }= new Dictionary<double, double>();
-        public Dictionary<double, double> Asks { get; set; } = new Dictionary<double, double>();
+        public PriceQuantityCollection Bids { get; set; } = new PriceQuantityCollection();
+        public PriceQuantityCollection Asks { get; set; } = new PriceQuantityCollection();
     }
 }

@@ -92,7 +92,7 @@ binance.Sell("ETH-BTC", 1.0, 0.001,
 ---
 
 ```cs
-CancelOrder(string symbol, string orderId)
+CancelOrder(string symbol, long orderId)
 ```
 
 Cancels an order.
@@ -112,7 +112,7 @@ binance.CancelOrder("ETH-BTC", orderId,
 ---
 
 ```cs
-OrderStatus(string symbol, string orderId, Action<OrderResponse> successCallback)
+OrderStatus(string symbol, long orderId, Action<OrderResponse> successCallback)
 ```
 
 Returns the status of an open order.
@@ -377,9 +377,21 @@ Opens a stream that invokes the callback when data is received on any of the spe
  <summary>View Example</summary>
  
 ```cs
-binance.DepthStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
+binance.DepthStream(new[] {"ETH-BTC", "LTC-BTC"}, depth =>
 {
-    // Handle stream responses for specified symbols
+  Console.WriteLine($"Incoming asks: {depth.Asks.First().Price}. Incoming bids: {depth.Bids.First().Price}");
+
+  if (depth.Asks.Any())
+  {
+    var ask = depth.Asks.First();
+    Console.WriteLine($"First ask values: Price {ask.Price}, Quantity {ask.Quantity}");
+  }
+
+  if (depth.Bids.Any())
+  {
+    var bid = depth.Bids.First();
+    Console.WriteLine($"First bid values: Price {bid.Price}, Quantity {bid.Quantity}");
+  }
 });
 ```
 </details>
@@ -398,7 +410,19 @@ Opens a depth cache stream that invokes the callback when data is received on an
 ```cs
 binance.DepthCacheStream(new[] { "ETH-BTC", "LTC-BTC" }, (symbol, depth) =>
 {
-    // Handle symbol and depth data for specified symbols
+  Console.WriteLine($"Depth cache stream received data for symbol {symbol}.");
+
+  if (depth.Asks.Any())
+  {
+    var ask = depth.Asks.First();
+    Console.WriteLine($"First ask values: Price {ask.Price}, Quantity {ask.Quantity}");
+  }
+
+  if (depth.Bids.Any())
+  {
+    var bid = depth.Bids.First();
+    Console.WriteLine($"First bid values: Price {bid.Price}, Quantity {bid.Quantity}");
+  }
 });
 ```
 </details>
@@ -415,9 +439,9 @@ Opens a trades stream that invokes the callback when data is received on any of 
  <summary>View Example</summary>
  
 ```cs
-binance.TradesStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
+binance.TradesStream(new[] {"ETH-BTC", "LTC-BTC"}, trade =>
 {
-    // Handle trade stream response
+  Console.WriteLine($"Trade time: {trade.TradeTime}");
 });
 ```
 </details>
@@ -436,7 +460,7 @@ Opens a charts stream that invokes the callback when data is received on any of 
 ```cs
 binance.ChartStream(new[] {"ETH-BTC", "LTC-BTC"}, 9999, (response, interval, ohlcDict) =>
 {
-    // Handle chart stream.
+  Console.WriteLine("Chart call invoked.");
 });
 ```
 </details>

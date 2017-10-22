@@ -47,17 +47,15 @@ namespace Binance.NET
         {
             var cache = DepthCache(symbol);
             double bidBase = 0, askBase = 0, bidQty = 0, askQty = 0;
-            foreach (var price in cache.Bids.Keys)
+            foreach (var bid in cache.Bids)
             {
-                var quantity = cache.Bids[price];
-                bidBase += quantity * price;
-                bidQty += quantity;
+                bidBase += bid.Quantity * bid.Price;
+                bidQty += bid.Quantity;
             }
-            foreach (var price in cache.Asks.Keys)
+            foreach (var ask in cache.Asks)
             {
-                var quantity = cache.Asks[price];
-                askBase += quantity * price;
-                askQty += quantity;
+                askBase += ask.Quantity * ask.Price;
+                askQty += ask.Quantity;
             }
             return new DepthVolume
             {
@@ -80,11 +78,11 @@ namespace Binance.NET
             {
                 if (!baseValue)
                 {
-                    sortedBids[price] = bids[price];
+                    sortedBids[price] = bids[price].Quantity;
                 }
                 else
                 {
-                    sortedBids[price] = bids[price] * price;
+                    sortedBids[price] = bids[price].Quantity * price;
                 }
                 if (++count > max)
                 {
@@ -106,11 +104,11 @@ namespace Binance.NET
             {
                 if (!baseValue)
                 {
-                    sortedAsks[price] = asks[price];
+                    sortedAsks[price] = asks[price].Quantity;
                 }
                 else
                 {
-                    sortedAsks[price] = asks[price] * price;
+                    sortedAsks[price] = asks[price].Quantity * price;
                 }
                 if (++count > max)
                 {
@@ -140,23 +138,23 @@ namespace Binance.NET
             Order("SELL", symbol, quantity, price, flags);
         }
 
-        public void CancelOrder(string symbol, string orderId, Action<OrderActionResponse> successCallback = null, Action<BinanceApiException> exceptionCallback = null)
+        public void CancelOrder(string symbol, long orderId, Action<OrderActionResponse> successCallback = null, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
                 {"symbol", symbol},
-                {"orderId", orderId}
+                {"orderId", orderId.ToString()}
             };
 
-            SignedRequest($"{Base}v3/order", query, HttpMethod.Delete, response => successCallback(response.ToObject<OrderActionResponse>()), exceptionCallback);
+            SignedRequest($"{Base}v3/order", query, HttpMethod.Delete, response => successCallback?.Invoke(response.ToObject<OrderActionResponse>()), exceptionCallback);
         }
 
-        public void OrderStatus(string symbol, string orderId, Action<OrderStatusResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void OrderStatus(string symbol, long orderId, Action<OrderStatusResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
                 {"symbol", symbol},
-                {"orderId", orderId}
+                {"orderId", orderId.ToString()}
             };
 
             SignedRequest($"{Base}v3/order", query, HttpMethod.Get, response => successCallback(response.ToObject<OrderStatusResponse>()), exceptionCallback);
@@ -252,7 +250,12 @@ namespace Binance.NET
 
         public void Balance(Action<Dictionary<string, Balance>> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
-            SignedRequest($"{Base}v3/account", new Dictionary<string, string>(), HttpMethod.Get, response => response.ToObject<List<Balance>>(), exceptionCallback);
+            SignedRequest($"{Base}v3/account", new Dictionary<string, string>(), HttpMethod.Get, response =>
+            {
+                var account = response.ToObject<AccountResponse>();
+                var balances = account.Balances;
+                successCallback(balances.ToDictionary(balance => balance.Symbol));
+            }, exceptionCallback);
         }
 
         public void Trades(string symbol, Action<TradesResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
@@ -466,7 +469,7 @@ namespace Binance.NET
             {
                 var bids = (JArray)jToken;
                 double bid = Convert.ToDouble(bids[0].ToString());
-                DepthCacheData[symbol].Bids[bid] = Convert.ToDouble(bids[1].ToString());
+                DepthCacheData[symbol].Bids.Set(bid, Convert.ToDouble(bids[1].ToString()));
                 if (bids[1].ToString() == "0.00000000")
                 {
                     DepthCacheData[symbol].Bids.Remove(Convert.ToDouble(bids[0].ToString()));
@@ -476,7 +479,7 @@ namespace Binance.NET
             {
                 var asks = (JArray)jToken;
                 double bid = Convert.ToDouble(asks[0].ToString());
-                DepthCacheData[symbol].Asks[bid] = Convert.ToDouble(asks[1].ToString());
+                DepthCacheData[symbol].Asks.Set(bid, Convert.ToDouble(asks[1].ToString()));
                 if (asks[1].ToString() == "0.00000000")
                 {
                     DepthCacheData[symbol].Asks.Remove(Convert.ToDouble(asks[0].ToString()));
@@ -733,12 +736,16 @@ namespace Binance.NET
             foreach (var jToken in depth["bids"])
             {
                 var bid = (JArray) jToken;
-                cache.Bids[bid[0].ToObject<double>()] = bid[1].ToObject<double>();
+                var price = bid[0].ToObject<double>();
+                var quantity = bid[1].ToObject<double>();
+                cache.Bids.Set(price, quantity);
             }
             foreach (var jToken in depth["asks"])
             {
                 var ask = (JArray) jToken;
-                cache.Asks[ask[0].ToObject<double>()] = ask[1].ToObject<double>();
+                var price = ask[0].ToObject<double>();
+                var quantity = ask[1].ToObject<double>();
+                cache.Asks.Set(price, quantity);
             }
             return cache;
         }

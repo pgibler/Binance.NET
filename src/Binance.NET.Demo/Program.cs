@@ -27,7 +27,10 @@ namespace Binance.NET.Demo
 
             // API call tests
 
-            binance.Buy("ETH-BTC", 1.0, 0.001);
+            binance.Buy("ETH-BTC", 1.0, 0.001, order =>
+            {
+                binance.CancelOrder("ETH-BTC", order.OrderId);
+            });
                                                 
             binance.Sell("BTC-USDT", 0.001, 10000);
 
@@ -43,8 +46,8 @@ namespace Binance.NET.Demo
             var sortedBids = binance.SortBids("ETH-BTC");
             
             Console.WriteLine($"Asks: {string.Join(",", sortedBids.Keys)}");
-            
-            var orderId = "";
+
+            long orderId = 0;
             
             binance.CancelOrder("ETH-BTC", orderId,
                 response =>
@@ -103,30 +106,48 @@ namespace Binance.NET.Demo
 
             var cache = binance.DepthCache("ETH-BTC");
             
-            Console.WriteLine($"Asks: {string.Join(",", cache.Asks.Keys)}, Bids: {string.Join(",", cache.Bids.Keys)}");
-            
-            binance.DepthStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
+            binance.DepthStream(new[] {"ETH-BTC", "LTC-BTC"}, depth =>
             {
-                Console.WriteLine("Call completed");
-                // Handle stream responses for specified symbols.
+                Console.WriteLine($"Incoming asks: {depth.Asks.First().Price}. Incoming bids: {depth.Bids.First().Price}");
+
+                if (depth.Asks.Any())
+                {
+                    var ask = depth.Asks.First();
+                    Console.WriteLine($"First ask values: Price {ask.Price}, Quantity {ask.Quantity}");
+                }
+
+                if (depth.Bids.Any())
+                {
+                    var bid = depth.Bids.First();
+                    Console.WriteLine($"First bid values: Price {bid.Price}, Quantity {bid.Quantity}");
+                }
             });
             
             binance.DepthCacheStream(new[] { "ETH-BTC", "LTC-BTC" }, (symbol, depth) =>
             {
-                Console.WriteLine("Call completed");
-                // Handle symbol and depth data for specified symbols.
+                Console.WriteLine($"Depth cache stream received data for symbol {symbol}.");
+
+                if (depth.Asks.Any())
+                {
+                    var ask = depth.Asks.First();
+                    Console.WriteLine($"First ask values: Price {ask.Price}, Quantity {ask.Quantity}");
+                }
+
+                if (depth.Bids.Any())
+                {
+                    var bid = depth.Bids.First();
+                    Console.WriteLine($"First bid values: Price {bid.Price}, Quantity {bid.Quantity}");
+                }
             });
             
-            binance.TradesStream(new[] {"ETH-BTC", "LTC-BTC"}, response =>
+            binance.TradesStream(new[] {"ETH-BTC", "LTC-BTC"}, trade =>
             {
-                Console.WriteLine("Call completed");
-                // Handle trade stream response.
+                Console.WriteLine($"Trade time: {trade.TradeTime}");
             });
             
             binance.ChartStream(new[] {"ETH-BTC", "LTC-BTC"}, 9999, (response, interval, ohlcDict) =>
             {
-                Console.WriteLine("Call completed");
-                // Handle chart stream.
+                Console.WriteLine("Chart call invoked.");
             });
         }
     }
