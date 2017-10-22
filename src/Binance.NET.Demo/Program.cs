@@ -20,7 +20,7 @@ namespace Binance.NET.Demo
 
             var exceptionHandler = new Action<BinanceApiException>(exception =>
             {
-                Console.WriteLine($"Error: code - ${exception.Code} | message - ${exception.Message}");
+                Console.WriteLine($"Catch: code - ${exception.Code} | message - ${exception.Message}");
             });
 
             binance.DefaultExceptionCallback = exceptionHandler;

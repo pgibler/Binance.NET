@@ -120,17 +120,27 @@ namespace Binance.NET
             return sortedAsks;
         }
 
-        public void Buy(string symbol, double quantity, double price, Dictionary<string, string> flags=null)
+        public void Buy(string symbol, double quantity, double price, Action<OrderActionResponse> successCallback = null, Action<BinanceApiException> exceptionCallback = null)
+        {
+            Buy(symbol, quantity, price, null, successCallback, exceptionCallback);
+        }
+
+        public void Buy(string symbol, double quantity, double price, Dictionary<string, string> flags = null, Action<OrderActionResponse> successCallback = null, Action<BinanceApiException> exceptionCallback = null)
         {
             Order("BUY", symbol, quantity, price, flags);
         }
 
-        public void Sell(string symbol, double quantity, double price, Dictionary<string, string> flags = null)
+        public void Sell(string symbol, double quantity, double price, Action<OrderActionResponse> successCallback = null, Action<BinanceApiException> exceptionCallback = null)
+        {
+            Sell(symbol, quantity, price, null, successCallback, exceptionCallback);
+        }
+
+        public void Sell(string symbol, double quantity, double price, Dictionary<string, string> flags = null, Action<OrderActionResponse> successCallback = null, Action<BinanceApiException> exceptionCallback = null)
         {
             Order("SELL", symbol, quantity, price, flags);
         }
 
-        public void CancelOrder(string symbol, string orderId, Action<CancelOrderResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void CancelOrder(string symbol, string orderId, Action<OrderActionResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
@@ -138,10 +148,10 @@ namespace Binance.NET
                 {"orderId", orderId}
             };
 
-            SignedRequest($"{Base}v3/order", query, HttpMethod.Delete, response => successCallback(response.ToObject<CancelOrderResponse>()), exceptionCallback);
+            SignedRequest($"{Base}v3/order", query, HttpMethod.Delete, response => successCallback(response.ToObject<OrderActionResponse>()), exceptionCallback);
         }
 
-        public void OrderStatus(string symbol, string orderId, Action<OrderResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
+        public void OrderStatus(string symbol, string orderId, Action<OrderActionResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
         {
             var query = new Dictionary<string, string>
             {
@@ -149,7 +159,7 @@ namespace Binance.NET
                 {"orderId", orderId}
             };
 
-            SignedRequest($"{Base}v3/order", query, HttpMethod.Get, response => successCallback(response.ToObject<OrderResponse>()), exceptionCallback);
+            SignedRequest($"{Base}v3/order", query, HttpMethod.Get, response => successCallback(response.ToObject<OrderActionResponse>()), exceptionCallback);
         }
 
         public void OpenOrders(string symbol, Action<OpenOrdersResponse> successCallback, Action<BinanceApiException> exceptionCallback = null)
@@ -581,7 +591,7 @@ namespace Binance.NET
             ApiRequest(url, query, method, successCallback, exceptionCallback);
         }
         
-        private void Order(string side, string symbol, double quantity=1, double price=0.00000001, Dictionary<string, string> flags=null, Action<OrderResponse> successCallback=null, Action<BinanceApiException> exceptionCallback=null)
+        private void Order(string side, string symbol, double quantity=1, double price=0.00000001, Dictionary<string, string> flags=null, Action<OrderActionResponse> successCallback=null, Action<BinanceApiException> exceptionCallback=null)
         {
             var query = new Dictionary<string, string>
             {
@@ -601,7 +611,7 @@ namespace Binance.NET
                 CopyDictionaryKey(flags, query, "stopPrice");
             }
             
-            SignedRequest($"{Base}v3/order", query, HttpMethod.Post, response => { successCallback?.Invoke(response.ToObject<OrderResponse>()); }, exceptionCallback);
+            SignedRequest($"{Base}v3/order", query, HttpMethod.Post, response => { successCallback?.Invoke(response.ToObject<OrderActionResponse>()); }, exceptionCallback);
         }
 
         private async void Subscribe(string endpoint, CancellationToken cancellationToken, Action<JToken> successCallback, Action<BinanceApiException> exceptionCallback=null)
