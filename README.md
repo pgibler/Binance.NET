@@ -1,7 +1,7 @@
 # Binance.NET
-A .NET Standard 2.0+ facade library for the Binanace API.
+A .NET Standard 2.0+ wrapper for the Binance API.
 
-Built for ease-of-use and extensibility.
+Built for **ease-of-use** and extensibility.
 
 ## Features
 
@@ -31,9 +31,9 @@ dotnet build
 
 ### From source
 
-- Build the project using the [Build from source] steps.
+- Build the project using the [build from source steps](#build-from-source).
 - Add the DLLs from the build to your project.
-- Reference them from the .csproj file containing the classes that will utilize the `BinanaceApi` class.
+- Reference them from the .csproj file containing the classes that will utilize the `Binance` class.
 
 Once you have done these steps, to use Binance.NET in your C# application, create an instance of `Binance` and invoke it's functionality from your code.
 
@@ -42,7 +42,7 @@ Once you have done these steps, to use Binance.NET in your C# application, creat
 ```cs
 // Retrieve your API key & secret from your account on binance and use those values here.
 string apiKey = "<your binance API key>";
-string apiSecret = "<your binanace API secret>";
+string apiSecret = "<your binance API secret>";
 
 // Instantiate a binance API service interaction instance.
 var binance = new Binance(apiKey, apiSecret);
@@ -58,8 +58,24 @@ binance.Sell("ETH-BTC", 1.0, 0.0015)
 
 In some cases, the API request may fail because of any number of reasons. In the event that the Binance API responds with an error message, the success callback is skipped on the API call and an error callback is invoked. You can set up a custom error handler in 2 ways:
 
-- As a parameter of the API call. This is usually the last parameter of the method.
+- As a parameter of the API call. This is usually the last parameter of the method. Example:
+
+```cs
+// Buy order handling the response.
+binance.Buy("ETH-BTC", 1.0, 0.00111213,
+  response => Console.WriteLine(response.OrderId),
+  exception => Console.WriteLine($"Error message: {exception.Message}"));
+```
+
 - Using the `DefaultExceptionCallback` property of the `Binance` class.
+
+```cs
+// Buy order handling the response.
+binance.DefaultExceptionCallback = exception => {
+  Console.WriteLine($"Error message: {exception.Message}"));
+  Logger.Log(exception);
+}
+```
 
 You can also mix both methods. If you specify a `DefaultExceptionCallback`, it will be used for all functions exception where you explicitly define an exception callback. This way you can handle exceptions in a general use case and then specifically handle ones that require custom behavior.
 
