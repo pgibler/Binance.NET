@@ -24,7 +24,7 @@ dotnet build
 
 ### Using Nuget
 
-`PM> Install-Package Binance`
+`PM> Install-Package Binance.NET`
 
 ### From source
 
