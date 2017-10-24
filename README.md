@@ -1,5 +1,7 @@
 # Binance.NET
-A .NET Standard 2.0+ facade library for the Binanace API. Built for ease-of-use and extensibility.
+A .NET Standard 2.0+ facade library for the Binanace API.
+
+Built for ease-of-use and extensibility.
 
 ## Features
 
