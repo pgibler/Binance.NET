@@ -491,5 +491,5 @@ binance.ChartStream(new[] {"ETH-BTC", "LTC-BTC"}, 9999, (response, interval, ohl
 
 ## Resources
 
-Official API documentation: [https://www.binance.com/restapipub.html]
-Binance Github organization: [https://github.com/binance-exchange]
+- [Official API documentation](https://www.binance.com/restapipub.html)
+- [Binance Github organization](https://github.com/binance-exchange)
