@@ -6,7 +6,7 @@ A .NET Standard 2.0+ wrapper for the Binance API.
 - **Static typing** of API data using [Newtonsoft.Json](https://www.newtonsoft.com/json).
 - **Custom error handling** that lets you set default & API specific error handling. See [error handling](#error-handling) for more info.
 - **Depth cache management** built directly into the `Binance` class.
-- Support for both [REST](#APIs-available) & [WebSocket](#Streams-available) APIs.
+- Support for both [REST](#apis-available) & [WebSocket](#streams-available) APIs.
 - **Demo application** with example usage of every API.
 
 ### Build from source
