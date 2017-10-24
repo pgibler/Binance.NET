@@ -77,9 +77,9 @@ binance.DefaultExceptionCallback = exception => {
 }
 ```
 
-You can also mix both methods. If you specify a `DefaultExceptionCallback`, it will be used for all functions exception where you explicitly define an exception callback. This way you can handle exceptions in a general use case and then specifically handle ones that require custom behavior.
+You can also mix both methods. If you specify a `DefaultExceptionCallback`, it will be invoked whenever an API call results in an exception if you did not provide the API call with an exception callback. This way you can handle exceptions in a general use case and then specifically handle ones that require custom behavior.
 
-For testing purposes, you can choose to eschew the usage of these as you try out the API methods. It is recommended you use them to see what goes wrong when you are testing.
+For testing purposes, you can choose to eschew the usage of these as you try out the API methods. However, it is recommended you use them to see what goes wrong when you are testing.
 
 ## APIs available
 
