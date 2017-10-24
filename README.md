@@ -1,7 +1,7 @@
 # Binance.NET
 A .NET Standard 2.0+ wrapper for the Binance API.
 
-### Features
+## Features
 
 - **Static typing** of API data using [Newtonsoft.Json](https://www.newtonsoft.com/json).
 - **Custom error handling** that lets you set default & API specific error handling. See [error handling](#error-handling) for more info.
@@ -9,7 +9,7 @@ A .NET Standard 2.0+ wrapper for the Binance API.
 - Support for both [REST](#apis-available) & [WebSocket](#streams-available) APIs.
 - **Demo application** with example usage of every API.
 
-### Build from source
+## Building the project
 
 **Binance.NET can be built on Windows, Mac, and Linux.**
 
