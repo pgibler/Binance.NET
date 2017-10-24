@@ -540,8 +540,10 @@ namespace Binance.NET
             {
                 Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded")
             };
-            var task = client.SendAsync(request);
-            var jsonString = task.Result.Content.ReadAsStringAsync();
+
+            var requestTask = client.SendAsync(request);
+
+            var jsonString = requestTask.Result.Content.ReadAsStringAsync();
             var response = JToken.Parse(jsonString.Result);
 
             if (response is JObject && response["code"] != null)
