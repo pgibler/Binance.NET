@@ -383,9 +383,9 @@ Console.WriteLine($"Asks: {string.Join(",", sortedAsks.Keys)}");
 
 ## Streams available
 
-Binance.NET comes with a set of streams that you can run to hook into Binance's WebSocket services.
+Binance.NET comes with a set of streams that you can run to listen and communicate with the Binance WebSocket services.
 
-All of these functions return a `CancellationTokenSource` instance so you can cancel their operation as needed.
+Each of these functions return a `CancellationTokenSource` instance so you can halt its operation as needed.
 
 ---
 
