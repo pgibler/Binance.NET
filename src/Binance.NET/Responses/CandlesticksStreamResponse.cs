@@ -1,4 +1,4 @@
-﻿namespace Binance.NET
+﻿namespace Binance.NET.Responses
 {
     public class CandlesticksStreamResponse
     {

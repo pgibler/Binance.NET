@@ -3,19 +3,25 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Binance.NET
+namespace Binance.NET.Responses
 {
-    public class UserDataStreamResponse
+    public class DepthStreamResponse
     {
         [JsonProperty("e")]
         public string EventType { get; set; }
         [JsonProperty("E")]
         public long EventTime { get; set; }
-        [JsonProperty("B"), JsonConverter(typeof(BalanceStreamConverter))]
-        public List<Balance> Balances { get; set; }
+        [JsonProperty("s")]
+        public string Symbol { get; set; }
+        [JsonProperty("u")]
+        public long UpdateId { get; set; }
+        [JsonProperty("b"), JsonConverter(typeof(PriceQuantityStreamConverter))]
+        public PriceQuantityCollection Bids { get; set; }
+        [JsonProperty("a"), JsonConverter(typeof(PriceQuantityStreamConverter))]
+        public PriceQuantityCollection Asks { get; set; }
     }
 
-    public class BalanceStreamConverter : JsonConverter
+    internal class PriceQuantityStreamConverter : JsonConverter
     {
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
@@ -30,16 +36,17 @@ namespace Binance.NET
 
             var token = JArray.FromObject(existingValue);
 
-            var asset = token["a"].ToString();
-            var available = Convert.ToDouble(token["f"].ToString());
-            var locked = Convert.ToDouble(token["l"].ToString());
+            var priceQuantity = new PriceQuantityCollection();
 
-            return new Balance
+            foreach (var child in token)
             {
-                Asset = asset,
-                Available = available,
-                Locked = locked
-            };
+                var array = (JArray) child;
+                var price = Convert.ToDouble(array[0].ToString());
+                var quantity = Convert.ToDouble(array[1].ToString());
+                priceQuantity.Set(price, quantity);
+            }
+
+            return priceQuantity;
         }
 
         // Not implemented.

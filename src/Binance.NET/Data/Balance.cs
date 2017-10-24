@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Binance.NET
+namespace Binance.NET.Data
 {
     public class Balance
     {

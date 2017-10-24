@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Binance.NET.Data;
 
-namespace Binance.NET
+namespace Binance.NET.Data
 {
     internal class Info
     {

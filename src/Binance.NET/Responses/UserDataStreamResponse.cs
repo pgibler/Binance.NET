@@ -1,27 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using Binance.NET.Data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Binance.NET
+namespace Binance.NET.Responses
 {
-    public class DepthStreamResponse
+    public class UserDataStreamResponse
     {
         [JsonProperty("e")]
         public string EventType { get; set; }
         [JsonProperty("E")]
         public long EventTime { get; set; }
-        [JsonProperty("s")]
-        public string Symbol { get; set; }
-        [JsonProperty("u")]
-        public long UpdateId { get; set; }
-        [JsonProperty("b"), JsonConverter(typeof(PriceQuantityStreamConverter))]
-        public PriceQuantityCollection Bids { get; set; }
-        [JsonProperty("a"), JsonConverter(typeof(PriceQuantityStreamConverter))]
-        public PriceQuantityCollection Asks { get; set; }
+        [JsonProperty("B"), JsonConverter(typeof(BalanceStreamConverter))]
+        public List<Balance> Balances { get; set; }
     }
 
-    internal class PriceQuantityStreamConverter : JsonConverter
+    public class BalanceStreamConverter : JsonConverter
     {
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
@@ -36,17 +31,16 @@ namespace Binance.NET
 
             var token = JArray.FromObject(existingValue);
 
-            var priceQuantity = new PriceQuantityCollection();
+            var asset = token["a"].ToString();
+            var available = Convert.ToDouble(token["f"].ToString());
+            var locked = Convert.ToDouble(token["l"].ToString());
 
-            foreach (var child in token)
+            return new Balance
             {
-                var array = (JArray) child;
-                var price = Convert.ToDouble(array[0].ToString());
-                var quantity = Convert.ToDouble(array[1].ToString());
-                priceQuantity.Set(price, quantity);
-            }
-
-            return priceQuantity;
+                Asset = asset,
+                Available = available,
+                Locked = locked
+            };
         }
 
         // Not implemented.

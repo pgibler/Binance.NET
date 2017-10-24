@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Binance.NET
+namespace Binance.NET.Data
 {
     public class OpenHighLowCloseChart
     {
