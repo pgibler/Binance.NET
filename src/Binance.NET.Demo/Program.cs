@@ -16,9 +16,9 @@ namespace Binance.NET.Demo
 
             // Instantiate binance API object with default exception handling.
 
-            var binance = new BinanceApi(apiKey, apiSecret);
+            var binance = new Binance(apiKey, apiSecret);
 
-            var exceptionHandler = new Action<BinanceApiException>(exception =>
+            var exceptionHandler = new Action<BinanceException>(exception =>
             {
                 Console.WriteLine($"Catch: code - ${exception.Code} | message - ${exception.Message}");
             });
@@ -105,7 +105,9 @@ namespace Binance.NET.Demo
             });
 
             var cache = binance.DepthCache("ETH-BTC");
-            
+
+            Console.WriteLine($"# Asks: {cache.Asks.Count()}, # Bids: {cache.Bids.Count()}");
+
             binance.DepthStream(new[] {"ETH-BTC", "LTC-BTC"}, depth =>
             {
                 Console.WriteLine($"Incoming asks: {depth.Asks.First().Price}. Incoming bids: {depth.Bids.First().Price}");

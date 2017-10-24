@@ -32,7 +32,7 @@ dotnet build
 - Add the DLLs from the build to your project.
 - Reference them from the .csproj file containing the classes that will utilize the `BinanaceApi` class.
 
-Once you have done these steps, to use Binance.NET in your C# application, create an instance of `BinanceApi` and invoke it's functionality from your code.
+Once you have done these steps, to use Binance.NET in your C# application, create an instance of `Binance` and invoke it's functionality from your code.
 
 ## Example usage
 
@@ -42,7 +42,7 @@ string apiKey = "<your binance API key>";
 string apiSecret = "<your binanace API secret>";
 
 // Instantiate a binance API service interaction instance.
-var binance = new BinanceApi(apiKey, apiSecret);
+var binance = new Binance(apiKey, apiSecret);
 
 // Create a buy order.
 binance.Buy("ETH-BTC", 1.0, 0.001);
@@ -56,7 +56,7 @@ binance.Sell("ETH-BTC", 1.0, 0.0015)
 In some cases, the API request may fail because of any number of reasons. In the event that the Binance API responds with an error message, the success callback is skipped on the API call and an error callback is invoked. You can set up a custom error handler in 2 ways:
 
 - As a parameter of the API call. This is usually the last parameter of the method.
-- Using the `DefaultExceptionCallback` property of the `BinanceApi` class.
+- Using the `DefaultExceptionCallback` property of the `Binance` class.
 
 You can also mix both methods. If you specify a `DefaultExceptionCallback`, it will be used for all functions exception where you explicitly define an exception callback. This way you can handle exceptions in a general use case and then specifically handle ones that require custom behavior.
 
@@ -64,7 +64,7 @@ For testing purposes, you can choose to eschew the usage of these as you try out
 
 ## APIs available
 
-Included in Binance.NET are the following API calls. All of these functions are members of the `BinanceApi` class.
+Included in Binance.NET are the following API calls. All of these functions are members of the `Binance` class.
 
 ---
 
@@ -320,7 +320,7 @@ Returns the depth cache of the symbol.
 ```cs
 var cache = binance.DepthCache("ETH-BTC");
             
-Console.WriteLine($"Asks: {string.Join(",", cache.Asks.Keys)}, Bids: {string.Join(",", cache.Bids.Keys)}")
+Console.WriteLine($"# Asks: {cache.Asks.Count()}, # Bids: {cache.Bids.Count()}");;
 ```
 </details>
 
