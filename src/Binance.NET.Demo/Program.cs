@@ -6,6 +6,11 @@ namespace Binance.NET.Demo
 {
     public class Program
     {
+        /// <summary>
+        /// The demo application. Includes 100% of the API calls available in the BinanceClient class.
+        /// 
+        /// All API calls are split onto multiple lines to make debugging and inspecting the results of this code more streamlined.
+        /// </summary>
         public static void Main(string[] args)
         {
             // Read in api key and secret settings.
@@ -16,9 +21,9 @@ namespace Binance.NET.Demo
 
             // Instantiate binance API object with default exception handling.
 
-            var binance = new Binance(apiKey, apiSecret);
+            var binance = new BinanceClient(apiKey, apiSecret);
 
-            var exceptionHandler = new Action<BinanceException>(exception =>
+            var exceptionHandler = new ExceptionCallback(exception =>
             {
                 Console.WriteLine($"Catch: code - ${exception.Code} | message - ${exception.Message}");
             });

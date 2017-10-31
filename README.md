@@ -10,7 +10,7 @@ Built for **ease-of-use** and extensibility.
 
 - **Static typing** of API data using [Newtonsoft.Json](https://www.newtonsoft.com/json).
 - **Custom error handling** that lets you set default & API specific error handling. See [error handling](#error-handling) for more info.
-- **Depth cache management** built directly into the `Binance` class.
+- **Depth cache management** built directly into the `BinanceClient` class.
 - Support for both [REST](#apis-available) & [WebSocket](#streams-available) APIs.
 - **Demo application** with example usage of every API.
 
@@ -36,9 +36,9 @@ dotnet build
 
 - Build the project using the [build from source steps](#build-from-source).
 - Add the DLLs from the build to your project.
-- Reference them from the .csproj file containing the classes that will utilize the `Binance` class.
+- Reference them from the .csproj file containing the classes that will utilize the `BinanceClient` class.
 
-Once you have done these steps, to use Binance.NET in your C# application, create an instance of `Binance` and invoke it's functionality from your code.
+Once you have done these steps, to use Binance.NET in your C# application, create an instance of `BinanceClient` and invoke it's functionality from your code.
 
 ## Example usage
 
@@ -47,8 +47,8 @@ Once you have done these steps, to use Binance.NET in your C# application, creat
 string apiKey = "<your binance API key>";
 string apiSecret = "<your binance API secret>";
 
-// Instantiate a binance API service interaction instance.
-var binance = new Binance(apiKey, apiSecret);
+// Instantiate a Binance API client.
+var binance = new BinanceClient(apiKey, apiSecret);
 
 // Create a buy order.
 binance.Buy("ETH-BTC", 1.0, 0.001);
@@ -67,15 +67,15 @@ In some cases, the API request may fail because of any number of reasons. In the
 // Buy order handling the response.
 binance.Buy("ETH-BTC", 1.0, 0.00111213,
   response => Console.WriteLine(response.OrderId),
-  exception => Console.WriteLine($"Error message: {exception.Message}"));
+  Console.WriteLine($"API error. Message: {exception.Message}. Code: ${exception.Code}"));
 ```
 
-- Using the `DefaultExceptionCallback` property of the `Binance` class.
+- Using the `DefaultExceptionCallback` property of the `BinanceClient` class.
 
 ```cs
-// Buy order handling the response.
+// Handle all unmanaged exceptions across all API calls.
 binance.DefaultExceptionCallback = exception => {
-  Console.WriteLine($"Error message: {exception.Message}"));
+  Console.WriteLine($"API error. Message: {exception.Message}. Code: ${exception.Code}"));
   Logger.Log(exception);
 }
 ```
@@ -86,7 +86,7 @@ For testing purposes, you can choose to eschew the usage of these as you try out
 
 ## APIs available
 
-Included in Binance.NET are the following API calls. All of these functions are members of the `Binance` class.
+Included in Binance.NET are the following API calls. All of these functions are members of the `BinanceClient` class.
 
 ---
 
