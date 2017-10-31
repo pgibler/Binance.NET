@@ -14,17 +14,6 @@ Built for **ease-of-use** and extensibility.
 - Support for both [REST](#apis-available) & [WebSocket](#streams-available) APIs.
 - **Demo application** with example usage of every API.
 
-## Building the project
-
-**Binance.NET can be built on Windows, Mac, and Linux.**
-
-Run the following steps to checkout the source code and build the library on your machine.
-
-```
-git clone https://github.com/pgibler/Binance.NET
-cd Binance.NET/src
-dotnet build
-```
 
 ## Installation
 
@@ -34,8 +23,18 @@ dotnet build
 
 ### From source
 
-- Build the project using the [build from source steps](#build-from-source).
-- Add the DLLs from the build to your project.
+**Binance.NET can be built on Windows, Mac, and Linux.**
+
+- Clone and build the project using the following commands.
+
+```
+git clone https://github.com/pgibler/Binance.NET
+cd Binance.NET/src
+dotnet build
+```
+
+- Locate the DLLs in the build directory at `Binance.NET/src/Binance.NET/bin/Debug/netstandard{version}`.
+- Add the DLLs from the build directory to your project.
 - Reference them from the .csproj file containing the classes that will utilize the `BinanceClient` class.
 
 Once you have done these steps, to use Binance.NET in your C# application, create an instance of `BinanceClient` and invoke it's functionality from your code.
