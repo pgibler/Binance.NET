@@ -1,5 +1,4 @@
 [![Latest .NET Standard](https://img.shields.io/badge/.NET%20Standard-%3E%3D2.0-brightgreen.svg)](#)
-[![Issues](https://img.shields.io/github/issues/pgibler/Binance.NET.svg)](https://github.com/pgibler/Binance.NET/issues)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/pgibler/Binance.NET/master/LICENSE)
 
 # Binance.NET
